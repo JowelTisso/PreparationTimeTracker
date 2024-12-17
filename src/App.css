@@ -1,0 +1,31 @@
+.App {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Nunito Sans", sans-serif;
+  padding: 30px;
+  height: 85vh;
+}
+
+.input-container{
+  background-color: lightsalmon;
+  width:250px ;
+  padding: 10px;
+  border-radius:10px
+}
+
+.text{
+  font-weight: bold;
+  font-size: 2rem;
+  color: lightseagreen;
+}
+
+.steps-container {
+  width: 100%; 
+  display: flex;
+  /* justify-content: center; */
+  /* flex-direction: row; */
+  background-color: lightblue;
+}
