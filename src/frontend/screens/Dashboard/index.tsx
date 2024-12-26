@@ -1,6 +1,8 @@
 import { UndoOutlined, UploadOutlined } from "@ant-design/icons";
 import { Button, message, Progress } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTimer } from "../../context/TimerProvider";
 import { COLORS } from "../../utils/Colors";
 import {
   ButtonWrapper,
@@ -11,14 +13,8 @@ import {
   ToggleButton,
   Wrapper,
 } from "./DashboardStyles";
-import { useNavigate } from "react-router-dom";
 
 type TimerType = "coding" | "interview" | "job" | null;
-type TimerState = {
-  coding: number;
-  interview: number;
-  job: number;
-};
 
 const defaultTimer = {
   coding: 6 * 60 * 60,
@@ -27,17 +23,16 @@ const defaultTimer = {
 };
 
 const Dashboard = () => {
-  const [activeTimer, setActiveTimer] = useState<TimerType>(null);
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
-
-  const [timers, setTimers] = useState<TimerState>(() => {
-    const savedTimers = localStorage.getItem("timers");
-    return savedTimers ? JSON.parse(savedTimers) : defaultTimer;
-  });
+  const { timers, activeTimer, setActiveTimer, setTimers } = useTimer();
 
   const handleClick = (type: TimerType) => {
-    setActiveTimer((prev) => (prev === type ? null : type));
+    if (activeTimer === type) {
+      setActiveTimer(null);
+    } else {
+      setActiveTimer(type);
+    }
     localStorage.setItem(
       "activeTimer",
       JSON.stringify(type === activeTimer ? null : type)
@@ -65,39 +60,13 @@ const Dashboard = () => {
     );
   };
 
-  let interval = useRef<NodeJS.Timeout>();
-
   useEffect(() => {
-    localStorage.setItem("timers", JSON.stringify(timers));
-  }, [timers]);
-
-  useEffect(() => {
-    if (activeTimer) {
-      interval.current = setInterval(() => {
-        setTimers((prevTimers) => {
-          const updatedTime = prevTimers[activeTimer] - 1;
-          return {
-            ...prevTimers,
-            [activeTimer]: updatedTime >= 0 ? updatedTime : 0,
-          };
-        });
-      }, 1000);
-    } else {
-      clearInterval(interval.current);
-    }
-
-    return () => clearInterval(interval.current);
-  }, [activeTimer]);
-
-  // useEffect(() => {
-  //   const handleBeforeUnload = () => {
-  //     console.log("unload");
-
-  //     localStorage.setItem("activeTimer", JSON.stringify(null));
-  //   };
-  //   window.addEventListener("beforeunload", handleBeforeUnload);
-  //   return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  // }, []);
+    const handleBeforeUnload = () => {
+      localStorage.setItem("activeTimer", JSON.stringify(null));
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
   const calculatePercent = (timer: number, totalMin: number = 120) => {
     const completedMin = totalMin - Math.ceil(timer / 60);
