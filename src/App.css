@@ -29,3 +29,11 @@
   /* flex-direction: row; */
   background-color: lightblue;
 }
+
+
+@media screen and (min-width: 800px) {
+  .App {
+    width: 70%;
+    margin: 0 auto;
+  }
+}

@@ -21,6 +21,8 @@ const ButtonWrapper = styled.div`
   gap: 30px;
   height: min-content;
   align-self: flex-end;
+  width: 100%;
+  justify-content: center;
 `;
 
 const ToggleButton = styled.button<{ isChecked: boolean }>`
@@ -104,6 +106,14 @@ const ResetBtnWrapper = styled.div`
   top: 40px;
 `;
 
+const LogoutBtnWrapper = styled.div`
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: 0;
+  top: 40px;
+`;
+
 export {
   ToggleButton,
   Wrapper,
@@ -111,4 +121,5 @@ export {
   Header,
   TimerWrapper,
   ResetBtnWrapper,
+  LogoutBtnWrapper,
 };

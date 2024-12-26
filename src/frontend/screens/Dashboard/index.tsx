@@ -1,15 +1,17 @@
-import { UndoOutlined } from "@ant-design/icons";
-import { Button, Progress } from "antd";
+import { UndoOutlined, UploadOutlined } from "@ant-design/icons";
+import { Button, message, Progress } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { COLORS } from "../../utils/Colors";
 import {
   ButtonWrapper,
   Header,
+  LogoutBtnWrapper,
   ResetBtnWrapper,
   TimerWrapper,
   ToggleButton,
   Wrapper,
 } from "./DashboardStyles";
+import { useNavigate } from "react-router-dom";
 
 type TimerType = "coding" | "interview" | "job" | null;
 type TimerState = {
@@ -26,6 +28,8 @@ const defaultTimer = {
 
 const Dashboard = () => {
   const [activeTimer, setActiveTimer] = useState<TimerType>(null);
+  const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [timers, setTimers] = useState<TimerState>(() => {
     const savedTimers = localStorage.getItem("timers");
@@ -85,13 +89,15 @@ const Dashboard = () => {
     return () => clearInterval(interval.current);
   }, [activeTimer]);
 
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      localStorage.setItem("activeTimer", JSON.stringify(null));
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
+  // useEffect(() => {
+  //   const handleBeforeUnload = () => {
+  //     console.log("unload");
+
+  //     localStorage.setItem("activeTimer", JSON.stringify(null));
+  //   };
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
+  //   return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  // }, []);
 
   const calculatePercent = (timer: number, totalMin: number = 120) => {
     const completedMin = totalMin - Math.ceil(timer / 60);
@@ -105,6 +111,18 @@ const Dashboard = () => {
 
   return (
     <Wrapper>
+      {contextHolder}
+      <LogoutBtnWrapper>
+        <Button
+          shape="circle"
+          icon={<UploadOutlined style={{ color: COLORS.Active }} />}
+          size="large"
+          onClick={() => {
+            localStorage.clear();
+            navigate("/auth");
+          }}
+        />
+      </LogoutBtnWrapper>
       <ResetBtnWrapper>
         <Button
           shape="circle"
