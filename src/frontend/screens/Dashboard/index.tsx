@@ -1,9 +1,15 @@
-import { UndoOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, message, Progress } from "antd";
-import { useEffect } from "react";
+import {
+  ExclamationCircleFilled,
+  UndoOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import { Button, Progress, Modal } from "antd";
+import { useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTimer } from "../../context/TimerProvider";
+import { useMessageApi } from "../../context/MessageProvider";
+import { defaultTimer, useTimer } from "../../context/TimerProvider";
 import { COLORS } from "../../utils/Colors";
+import { POST } from "../../utils/helper";
 import {
   ButtonWrapper,
   Header,
@@ -16,16 +22,37 @@ import {
 
 type TimerType = "coding" | "interview" | "job" | null;
 
-const defaultTimer = {
-  coding: 6 * 60 * 60,
-  interview: 2 * 60 * 60,
-  job: 2 * 60 * 60,
+const currentDate = new Date().setHours(0, 0, 0, 0);
+
+const calculatePercent = (timer: number, totalMin: number = 120) => {
+  const completedMin = totalMin - Math.ceil(timer / 60);
+  const codingPercent = (completedMin / totalMin) * 100;
+  return Math.round(codingPercent);
 };
+
+const formatTime = (time: number) => {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = time % 60;
+
+  return (
+    <>
+      <span className="time-value">{hours.toString()}</span>
+      <span className="time-label"> hr </span>
+      <span className="time-value">{minutes.toString().padStart(2, "0")}</span>
+      <span className="time-label"> min </span>
+      <span className="time-value">{seconds.toString().padStart(2, "0")}</span>
+      <span className="time-label"> sec</span>
+    </>
+  );
+};
+const { confirm } = Modal;
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [messageApi, contextHolder] = message.useMessage();
   const { timers, activeTimer, setActiveTimer, setTimers } = useTimer();
+  const latestTimersRef = useRef(timers);
+  const messageApi = useMessageApi();
 
   const handleClick = (type: TimerType) => {
     if (activeTimer === type) {
@@ -33,63 +60,79 @@ const Dashboard = () => {
     } else {
       setActiveTimer(type);
     }
-    localStorage.setItem(
-      "activeTimer",
-      JSON.stringify(type === activeTimer ? null : type)
-    );
   };
 
-  const formatTime = (time: number) => {
-    const hours = Math.floor(time / 3600);
-    const minutes = Math.floor((time % 3600) / 60);
-    const seconds = time % 60;
+  const saveTimerDataToDB = useCallback(async () => {
+    const data = {
+      activeTimer,
+      date: currentDate,
+      tasks: {
+        coding: latestTimersRef.current.coding,
+        interview: latestTimersRef.current.interview,
+        job: latestTimersRef.current.job,
+      },
+    };
+    const res = await POST("dashboard/", data);
 
-    return (
-      <>
-        <span className="time-value">{hours.toString()}</span>
-        <span className="time-label"> hr </span>
-        <span className="time-value">
-          {minutes.toString().padStart(2, "0")}
-        </span>
-        <span className="time-label"> min </span>
-        <span className="time-value">
-          {seconds.toString().padStart(2, "0")}
-        </span>
-        <span className="time-label"> sec</span>
-      </>
-    );
+    if (res) {
+      messageApi.open({
+        type: "success",
+        content: "Timer data saved successfully",
+      });
+    }
+  }, []);
+
+  const resetTimer = () => {
+    confirm({
+      title: "Do you want to reset the timer?",
+      icon: <ExclamationCircleFilled />,
+      content: "All the progress of this day will be lost!",
+      okText: "Reset",
+      okType: "danger",
+      cancelText: "Cancel",
+      maskClosable: true,
+      onOk() {
+        console.log("OK");
+        setTimers(defaultTimer);
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const logoutHandler = () => {
+    saveTimerDataToDB();
+    setActiveTimer(null);
+    localStorage.clear();
+    navigate("/auth");
+  };
+
+  const actionOnVisibilityChange = () => {
+    if (document.visibilityState === "hidden") {
+      saveTimerDataToDB();
+    }
   };
 
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      localStorage.setItem("activeTimer", JSON.stringify(null));
+    latestTimersRef.current = timers;
+    document.addEventListener("visibilitychange", actionOnVisibilityChange);
+    return () => {
+      document.removeEventListener(
+        "visibilitychange",
+        actionOnVisibilityChange
+      );
     };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
-
-  const calculatePercent = (timer: number, totalMin: number = 120) => {
-    const completedMin = totalMin - Math.ceil(timer / 60);
-    const codingPercent = (completedMin / totalMin) * 100;
-    return Math.round(codingPercent);
-  };
-
-  const onReset = () => {
-    setTimers(defaultTimer);
-  };
+  }, [timers]);
 
   return (
     <Wrapper>
-      {contextHolder}
       <LogoutBtnWrapper>
         <Button
           shape="circle"
           icon={<UploadOutlined style={{ color: COLORS.Active }} />}
           size="large"
-          onClick={() => {
-            localStorage.clear();
-            navigate("/auth");
-          }}
+          onClick={logoutHandler}
         />
       </LogoutBtnWrapper>
       <ResetBtnWrapper>
@@ -97,7 +140,7 @@ const Dashboard = () => {
           shape="circle"
           icon={<UndoOutlined style={{ color: COLORS.Active }} />}
           size="large"
-          onClick={onReset}
+          onClick={resetTimer}
         />
       </ResetBtnWrapper>
       <Header>
@@ -133,10 +176,7 @@ const Dashboard = () => {
           size={"small"}
         />
       </TimerWrapper>
-      {/* <Header>
-        <p>Dedicated Time</p>
-        <p className="dedicated-time">10 hours</p>
-      </Header> */}
+
       <ButtonWrapper>
         <div>
           <ToggleButton

@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-
+import { GET, getFromLocalStorage, POST } from "../utils/helper";
 interface TimerContextType {
   timers: TimerState;
   activeTimer: TimerType;
@@ -19,7 +19,7 @@ type TimerState = {
   job: number;
 };
 
-const defaultTimer = {
+export const defaultTimer = {
   coding: 6 * 60 * 60,
   interview: 2 * 60 * 60,
   job: 2 * 60 * 60,
@@ -28,22 +28,54 @@ const defaultTimer = {
 type TimerType = "coding" | "interview" | "job" | null;
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
+const currentDate = new Date().setHours(0, 0, 0, 0);
+const getDashboardData = async () => {
+  const token = getFromLocalStorage("token");
+  const res = await GET(`dashboard/${currentDate}`, token);
+  return res;
+};
 
 export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [timers, setTimers] = useState<TimerState>(() => {
-    const savedTimers = localStorage.getItem("timers");
-    return savedTimers ? JSON.parse(savedTimers) : defaultTimer;
-  });
+  const [timers, setTimers] = useState<TimerState>(defaultTimer);
   const [activeTimer, setActiveTimer] = useState<TimerType>(null);
   let interval = useRef<NodeJS.Timeout>();
+  let counter = useRef(0);
 
-  //   console.log({ timers, activeTimer });
+  const saveTimerDataToDB = async () => {
+    const data = {
+      activeTimer,
+      date: currentDate,
+      tasks: {
+        coding: timers.coding,
+        interview: timers.interview,
+        job: timers.job,
+      },
+    };
+    const res = await POST("dashboard/", data);
+    // if (res) {
+    //   messageApi.success("Timer data saved successfully");
+    // }
+  };
 
-  //   useEffect(() => {
-  //     localStorage.setItem("timers", JSON.stringify(timers));
-  //   }, [timers]);
+  useEffect(() => {
+    (async () => {
+      const dashboardData = await getDashboardData();
+      if (dashboardData) {
+        setTimers(dashboardData.tasks);
+        setActiveTimer(dashboardData.activeTimer);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    counter.current++;
+    if (counter.current > 60) {
+      counter.current = 0;
+      saveTimerDataToDB();
+    }
+  }, [timers, counter, activeTimer]);
 
   useEffect(() => {
     if (activeTimer) {

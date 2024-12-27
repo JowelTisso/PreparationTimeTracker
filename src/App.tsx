@@ -3,6 +3,7 @@ import "./App.css";
 import BottomNav from "./frontend/components/BottomNav/BottomNav";
 import AllRoutes from "./frontend/routes";
 import { useEffect } from "react";
+import { getFromLocalStorage } from "./frontend/utils/helper";
 
 function App() {
   const location = useLocation();
@@ -10,7 +11,7 @@ function App() {
   const navigate = useNavigate();
 
   const checkUserLogin = () => {
-    const token = localStorage.getItem("token");
+    const token = getFromLocalStorage("token");
     if (token) {
       navigate("/");
     } else {
