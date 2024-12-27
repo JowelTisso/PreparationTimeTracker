@@ -80,7 +80,7 @@ const Dashboard = () => {
         content: "Timer data saved successfully",
       });
     }
-  }, []);
+  }, [activeTimer]);
 
   const resetTimer = () => {
     confirm({
