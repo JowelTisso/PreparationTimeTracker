@@ -9,9 +9,10 @@ import { useMessageApi } from "../../context/MessageProvider";
 const { Title } = Typography;
 
 type ValuesType = {
-  name?: string;
+  name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
 const AuthScreen: React.FC = () => {
@@ -21,11 +22,11 @@ const AuthScreen: React.FC = () => {
   const messageApi = useMessageApi();
 
   const onFinish = (values: ValuesType) => {
-    const { name, email, password } = values;
+    const { name, email, password, confirmPassword } = values;
     if (isLogin) {
       loginHandler(email, password);
     } else {
-      signupHandler(name!, email, password);
+      signupHandler(name!, email, password, confirmPassword!);
     }
   };
 
@@ -54,9 +55,14 @@ const AuthScreen: React.FC = () => {
   const signupHandler = async (
     name: string,
     email: string,
-    password: string
+    password: string,
+    confirmPassword: string
   ) => {
     try {
+      if (password !== confirmPassword) {
+        openNotification("error", "Password and confirm password do not match");
+        return;
+      }
       const res = await axios.post("/users/signup", {
         name,
         email,

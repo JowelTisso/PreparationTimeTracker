@@ -3,12 +3,9 @@ import { COLORS } from "../../utils/Colors";
 
 const Wrapper = styled.div`
   width: 100%;
-  /* height: 90vh; */
   flex: 1;
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
-  /* background-color: lightgreen; */
   p {
     color: ${COLORS.Secondary};
     font-size: 1.1rem;
@@ -17,7 +14,6 @@ const Wrapper = styled.div`
 
 const ButtonWrapper = styled.div`
   display: flex;
-  /* background-color: lightblue; */
   gap: 30px;
   height: min-content;
   align-self: flex-end;
@@ -55,7 +51,13 @@ const Header = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  /* background-color: lightgoldenrodyellow; */
+  div {
+    display: flex;
+    align-items: center;
+    width: 250px;
+    margin-left: 25px;
+  }
+
   p {
     font-size: 1.7rem;
     font-weight: 500;
@@ -76,12 +78,10 @@ const Header = styled.div`
 const TimerWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  /* background-color: lightblue; */
   flex: 1;
 
   .wrapper {
     font-size: 1.5rem;
-    /* background-color: lightblue; */
     gap: 50px;
     display: flex;
     justify-content: space-between;

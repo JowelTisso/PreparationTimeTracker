@@ -11,6 +11,8 @@ interface TimerContextType {
   activeTimer: TimerType;
   setActiveTimer: (type: TimerType) => void;
   setTimers: React.Dispatch<React.SetStateAction<TimerState>>;
+  timersSnapshot: TimerState;
+  setTimersSnapshot: (timers: TimerState) => void;
 }
 
 type TimerState = {
@@ -40,28 +42,29 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [timers, setTimers] = useState<TimerState>(defaultTimer);
   const [activeTimer, setActiveTimer] = useState<TimerType>(null);
+  const [timersSnapshot, setTimersSnapshot] = useState(defaultTimer);
   let interval = useRef<NodeJS.Timeout>();
   let counter = useRef(0);
 
   const saveTimerDataToDB = async () => {
+    const tasks = {
+      coding: timers.coding,
+      interview: timers.interview,
+      job: timers.job,
+    };
     const data = {
       activeTimer,
       date: currentDate,
-      tasks: {
-        coding: timers.coding,
-        interview: timers.interview,
-        job: timers.job,
-      },
+      tasks,
     };
-    const res = await POST("dashboard/", data);
-    // if (res) {
-    //   messageApi.success("Timer data saved successfully");
-    // }
+    await POST("dashboard/", data);
+    setTimersSnapshot(tasks);
   };
 
   useEffect(() => {
     (async () => {
       const dashboardData = await getDashboardData();
+      setTimersSnapshot(JSON.parse(JSON.stringify(dashboardData.tasks)));
       if (dashboardData) {
         setTimers(dashboardData.tasks);
         setActiveTimer(dashboardData.activeTimer);
@@ -96,7 +99,14 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <TimerContext.Provider
-      value={{ timers, activeTimer, setActiveTimer, setTimers }}
+      value={{
+        timers,
+        activeTimer,
+        setActiveTimer,
+        setTimers,
+        timersSnapshot,
+        setTimersSnapshot,
+      }}
     >
       {children}
     </TimerContext.Provider>

@@ -1,12 +1,14 @@
 import {
+  CheckCircleTwoTone,
   ExclamationCircleFilled,
+  LoadingOutlined,
   UndoOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { Button, Progress, Modal } from "antd";
-import { useCallback, useEffect, useRef } from "react";
+import { Button, Modal, Progress, Spin } from "antd";
+import { debounce, isEqual } from "lodash";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMessageApi } from "../../context/MessageProvider";
 import { defaultTimer, useTimer } from "../../context/TimerProvider";
 import { COLORS } from "../../utils/Colors";
 import { POST } from "../../utils/helper";
@@ -49,10 +51,23 @@ const formatTime = (time: number) => {
 const { confirm } = Modal;
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState({
+    spin: false,
+    tick: false,
+  });
   const navigate = useNavigate();
-  const { timers, activeTimer, setActiveTimer, setTimers } = useTimer();
+  const {
+    timers,
+    activeTimer,
+    setActiveTimer,
+    setTimers,
+    timersSnapshot,
+    setTimersSnapshot,
+  } = useTimer();
   const latestTimersRef = useRef(timers);
-  const messageApi = useMessageApi();
+  const timersSnapshotRef = useRef(timersSnapshot);
+  const activeTimerRef = useRef(activeTimer);
+  const debouncedSaveTimerDataToDBRef = useRef<any>();
 
   const handleClick = (type: TimerType) => {
     if (activeTimer === type) {
@@ -60,27 +75,42 @@ const Dashboard = () => {
     } else {
       setActiveTimer(type);
     }
+    debouncedSaveTimerDataToDBRef.current();
   };
 
-  const saveTimerDataToDB = useCallback(async () => {
-    const data = {
-      activeTimer,
-      date: currentDate,
-      tasks: {
-        coding: latestTimersRef.current.coding,
-        interview: latestTimersRef.current.interview,
-        job: latestTimersRef.current.job,
-      },
-    };
-    const res = await POST("dashboard/", data);
+  const isDataChanged = () =>
+    !isEqual(latestTimersRef.current, timersSnapshotRef.current);
 
-    if (res) {
-      messageApi.open({
-        type: "success",
-        content: "Timer data saved successfully",
-      });
+  const saveTimerDataToDB = async () => {
+    const tasks = {
+      coding: latestTimersRef.current.coding,
+      interview: latestTimersRef.current.interview,
+      job: latestTimersRef.current.job,
+    };
+
+    if (isDataChanged()) {
+      setLoading((prev) => ({ ...prev, spin: true }));
+      const data = {
+        activeTimer: activeTimerRef.current,
+        date: currentDate,
+        tasks,
+      };
+      const res = await POST("dashboard/", data);
+      if (res) {
+        setLoading({
+          spin: false,
+          tick: true,
+        });
+        setTimersSnapshot(tasks);
+      }
+      setTimeout(() => {
+        setLoading({
+          spin: false,
+          tick: false,
+        });
+      }, 2000);
     }
-  }, [activeTimer]);
+  };
 
   const resetTimer = () => {
     confirm({
@@ -92,11 +122,7 @@ const Dashboard = () => {
       cancelText: "Cancel",
       maskClosable: true,
       onOk() {
-        console.log("OK");
         setTimers(defaultTimer);
-      },
-      onCancel() {
-        console.log("Cancel");
       },
     });
   };
@@ -115,7 +141,13 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    debouncedSaveTimerDataToDBRef.current = debounce(saveTimerDataToDB, 2000);
+  }, []);
+
+  useEffect(() => {
     latestTimersRef.current = timers;
+    timersSnapshotRef.current = timersSnapshot;
+    activeTimerRef.current = activeTimer;
     document.addEventListener("visibilitychange", actionOnVisibilityChange);
     return () => {
       document.removeEventListener(
@@ -123,7 +155,7 @@ const Dashboard = () => {
         actionOnVisibilityChange
       );
     };
-  }, [timers]);
+  }, [timers, activeTimer, timersSnapshot]);
 
   return (
     <Wrapper>
@@ -144,7 +176,20 @@ const Dashboard = () => {
         />
       </ResetBtnWrapper>
       <Header>
-        <p>Dedicated Time</p>
+        <div>
+          <p>Dedicated Time</p>
+          {loading.spin && (
+            <Spin
+              indicator={<LoadingOutlined spin />}
+              size="small"
+              style={{
+                width: "20px",
+                marginLeft: 0,
+              }}
+            />
+          )}
+          {loading.tick && <CheckCircleTwoTone twoToneColor="#52c41a" />}
+        </div>
         <p className="dedicated-time">10 hours</p>
       </Header>
       <TimerWrapper>
