@@ -5,6 +5,7 @@ import axios from "axios";
 import { saveToLocalStorage } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
 import { useMessageApi } from "../../context/MessageProvider";
+import { COLORS } from "../../utils/Colors";
 
 const { Title } = Typography;
 
@@ -93,7 +94,14 @@ const AuthScreen: React.FC = () => {
     <Container>
       <CardWrapper>
         <FormContainer>
-          <Title level={2}>{isLogin ? "Login" : "Signup"}</Title>
+          <Title
+            style={{
+              color: COLORS.Secondary,
+            }}
+            level={2}
+          >
+            {isLogin ? "Login" : "Signup"}
+          </Title>
           <Form
             form={form}
             name="authForm"
@@ -146,12 +154,21 @@ const AuthScreen: React.FC = () => {
             )}
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" block>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                style={{
+                  color: COLORS.Secondary,
+                  backgroundColor: COLORS.Idle,
+                }}
+              >
                 {isLogin ? "Login" : "Signup"}
               </Button>
             </Form.Item>
           </Form>
           <Button
+            className="signup-link"
             type="link"
             onClick={() => {
               setIsLogin(!isLogin);

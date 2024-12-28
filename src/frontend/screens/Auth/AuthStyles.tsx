@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { COLORS } from "../../utils/Colors";
 
 export const Container = styled.div`
   display: flex;
@@ -22,4 +23,11 @@ export const CardWrapper = styled.div`
 export const FormContainer = styled.div`
   flex: 1;
   padding: 40px;
+
+  .signup-link {
+    color: ${COLORS.Active} !important;
+  }
+  &:active {
+    background-color: white;
+  }
 `;
