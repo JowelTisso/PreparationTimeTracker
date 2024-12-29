@@ -45,36 +45,6 @@ const ToggleButton = styled.button<{ isChecked: boolean }>`
   }
 `;
 
-const Header = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  div {
-    display: flex;
-    align-items: center;
-    width: 250px;
-    margin-left: 25px;
-  }
-
-  p {
-    font-size: 1.7rem;
-    font-weight: 500;
-    margin: 15px;
-  }
-  .dedicated-time {
-    font-weight: 400;
-    border: 2px solid ${COLORS.Active};
-    width: max-content;
-    padding: 12px;
-    margin-top: 20px;
-    border-radius: 15px;
-    background-color: #fffbf7;
-    flex: 1;
-  }
-`;
-
 const TimerWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -118,7 +88,6 @@ export {
   ToggleButton,
   Wrapper,
   ButtonWrapper,
-  Header,
   TimerWrapper,
   ResetBtnWrapper,
   LogoutBtnWrapper,

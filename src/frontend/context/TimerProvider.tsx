@@ -1,11 +1,16 @@
 import React, {
   createContext,
   useContext,
-  useState,
   useEffect,
   useRef,
+  useState,
 } from "react";
-import { GET, getFromLocalStorage, POST } from "../utils/helper";
+import {
+  GET,
+  getCurrentDate,
+  getFromLocalStorage,
+  POST,
+} from "../utils/helper";
 interface TimerContextType {
   timers: TimerState;
   activeTimer: TimerType;
@@ -30,11 +35,14 @@ export const defaultTimer = {
 type TimerType = "coding" | "interview" | "job" | null;
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
-const currentDate = new Date().setHours(0, 0, 0, 0);
+
+const currentDate = getCurrentDate();
 const getDashboardData = async () => {
   const token = getFromLocalStorage("token");
-  const res = await GET(`dashboard/${currentDate}`, token);
-  return res;
+  if (token) {
+    const res = await GET(`dashboard/${currentDate}`, true);
+    return res;
+  }
 };
 
 export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -64,8 +72,8 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     (async () => {
       const dashboardData = await getDashboardData();
-      setTimersSnapshot(JSON.parse(JSON.stringify(dashboardData.tasks)));
       if (dashboardData) {
+        setTimersSnapshot(JSON.parse(JSON.stringify(dashboardData.tasks)));
         setTimers(dashboardData.tasks);
         setActiveTimer(dashboardData.activeTimer);
       }

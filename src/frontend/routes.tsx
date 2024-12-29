@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Dashboard from "./screens/Dashboard";
+import Dashboard from "./screens/Dashboard/Dashboard";
 import Calendar from "./screens/Calendar/Calendar";
 import Logs from "./screens/logs/Logs";
 import AuthScreen from "./screens/Auth/Login";

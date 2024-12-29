@@ -1,20 +1,18 @@
 import {
-  CheckCircleTwoTone,
   ExclamationCircleFilled,
-  LoadingOutlined,
   UndoOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { Button, Modal, Progress, Spin } from "antd";
+import { Button, Modal, Progress } from "antd";
 import { debounce, isEqual } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../../components/Header/Header";
 import { defaultTimer, useTimer } from "../../context/TimerProvider";
 import { COLORS } from "../../utils/Colors";
-import { POST } from "../../utils/helper";
+import { getCurrentDate, POST } from "../../utils/helper";
 import {
   ButtonWrapper,
-  Header,
   LogoutBtnWrapper,
   ResetBtnWrapper,
   TimerWrapper,
@@ -24,9 +22,9 @@ import {
 
 type TimerType = "coding" | "interview" | "job" | null;
 
-const currentDate = new Date().setHours(0, 0, 0, 0);
+const currentDate = getCurrentDate();
 
-const calculatePercent = (timer: number, totalMin: number = 120) => {
+export const calculatePercent = (timer: number, totalMin: number = 120) => {
   const completedMin = totalMin - Math.ceil(timer / 60);
   const codingPercent = (completedMin / totalMin) * 100;
   return Math.round(codingPercent);
@@ -64,34 +62,31 @@ const Dashboard = () => {
     timersSnapshot,
     setTimersSnapshot,
   } = useTimer();
-  const latestTimersRef = useRef(timers);
+  const timersRef = useRef(timers);
   const timersSnapshotRef = useRef(timersSnapshot);
-  const activeTimerRef = useRef(activeTimer);
   const debouncedSaveTimerDataToDBRef = useRef<any>();
 
   const handleClick = (type: TimerType) => {
-    if (activeTimer === type) {
-      setActiveTimer(null);
-    } else {
-      setActiveTimer(type);
-    }
-    debouncedSaveTimerDataToDBRef.current();
+    const isSameTimer = activeTimer === type;
+    setActiveTimer(isSameTimer ? null : type);
+    debouncedSaveTimerDataToDBRef.current(isSameTimer ? null : type);
   };
 
   const isDataChanged = () =>
-    !isEqual(latestTimersRef.current, timersSnapshotRef.current);
+    !isEqual(timersRef.current, timersSnapshotRef.current);
 
-  const saveTimerDataToDB = async () => {
+  const saveTimerDataToDB = async (currentTimer: TimerType) => {
+    const latestTimers = timersRef.current;
     const tasks = {
-      coding: latestTimersRef.current.coding,
-      interview: latestTimersRef.current.interview,
-      job: latestTimersRef.current.job,
+      coding: latestTimers.coding,
+      interview: latestTimers.interview,
+      job: latestTimers.job,
     };
 
     if (isDataChanged()) {
       setLoading((prev) => ({ ...prev, spin: true }));
       const data = {
-        activeTimer: activeTimerRef.current,
+        activeTimer: currentTimer,
         date: currentDate,
         tasks,
       };
@@ -109,6 +104,7 @@ const Dashboard = () => {
           tick: false,
         });
       }, 2000);
+      return res;
     }
   };
 
@@ -127,27 +123,26 @@ const Dashboard = () => {
     });
   };
 
-  const logoutHandler = () => {
-    saveTimerDataToDB();
+  const logoutHandler = debounce(async () => {
+    await saveTimerDataToDB(null);
     setActiveTimer(null);
     localStorage.clear();
     navigate("/auth");
-  };
+  }, 500);
 
-  const actionOnVisibilityChange = () => {
+  const actionOnVisibilityChange = debounce(() => {
     if (document.visibilityState === "hidden") {
-      saveTimerDataToDB();
+      saveTimerDataToDB(activeTimer);
     }
-  };
+  }, 1000);
 
   useEffect(() => {
     debouncedSaveTimerDataToDBRef.current = debounce(saveTimerDataToDB, 2000);
   }, []);
 
   useEffect(() => {
-    latestTimersRef.current = timers;
+    timersRef.current = timers;
     timersSnapshotRef.current = timersSnapshot;
-    activeTimerRef.current = activeTimer;
     document.addEventListener("visibilitychange", actionOnVisibilityChange);
     return () => {
       document.removeEventListener(
@@ -155,7 +150,7 @@ const Dashboard = () => {
         actionOnVisibilityChange
       );
     };
-  }, [timers, activeTimer, timersSnapshot]);
+  }, [timers, timersSnapshot]);
 
   return (
     <Wrapper>
@@ -175,23 +170,7 @@ const Dashboard = () => {
           onClick={resetTimer}
         />
       </ResetBtnWrapper>
-      <Header>
-        <div>
-          <p>Dedicated Time</p>
-          {loading.spin && (
-            <Spin
-              indicator={<LoadingOutlined spin />}
-              size="small"
-              style={{
-                width: "20px",
-                marginLeft: 0,
-              }}
-            />
-          )}
-          {loading.tick && <CheckCircleTwoTone twoToneColor="#52c41a" />}
-        </div>
-        <p className="dedicated-time">10 hours</p>
-      </Header>
+      <Header title="Dedicated Time" loading={loading} isDashboard={true} />
       <TimerWrapper>
         <div className="wrapper">
           <span className="title">Coding</span>
