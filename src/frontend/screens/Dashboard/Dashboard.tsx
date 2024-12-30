@@ -19,6 +19,9 @@ import {
   ToggleButton,
   Wrapper,
 } from "./DashboardStyles";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import { initialLogState, updateLogs } from "../../reducer/logSlice";
 
 type TimerType = "coding" | "interview" | "job" | null;
 
@@ -65,6 +68,7 @@ const Dashboard = () => {
   const timersRef = useRef(timers);
   const timersSnapshotRef = useRef(timersSnapshot);
   const debouncedSaveTimerDataToDBRef = useRef<any>();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleClick = (type: TimerType) => {
     const isSameTimer = activeTimer === type;
@@ -125,6 +129,7 @@ const Dashboard = () => {
 
   const logoutHandler = debounce(async () => {
     await saveTimerDataToDB(null);
+    dispatch(updateLogs(initialLogState));
     setActiveTimer(null);
     localStorage.clear();
     navigate("/auth");

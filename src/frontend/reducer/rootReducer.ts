@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import logReducer from "./logSlice";
 
 const rootReducer = combineReducers({
-  logs: logReducer,
+  logState: logReducer,
 });
 
 export default rootReducer;

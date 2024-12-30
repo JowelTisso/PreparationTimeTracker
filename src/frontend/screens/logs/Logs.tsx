@@ -1,21 +1,34 @@
+import { Input } from "antd";
+import { SearchProps } from "antd/es/input";
 import { useEffect } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/Header/Header";
+import { LogsResponse, updateLogs } from "../../reducer/logSlice";
+import { AppDispatch, RootState } from "../../store/store";
 import { GET } from "../../utils/helper";
 import LogItem from "./LogItem";
-import { ContentWrapper, Wrapper } from "./LogsStyles";
-import { useSelector, useDispatch } from "react-redux";
-import { updateLogs } from "../../reducer/logSlice";
-import { RootState, AppDispatch } from "../../store/store";
-import { Table } from "antd";
+import { ContentWrapper, FilterWrapper, Wrapper } from "./LogsStyles";
 
 const Logs: React.FC = () => {
-  const logsData = useSelector((state: RootState) => state.logs.data);
+  const logsData = useSelector(({ logState }: RootState) => logState.logs);
   const dispatch = useDispatch<AppDispatch>();
+  const { Search } = Input;
+
   const getLogs = async () => {
-    const logs = await GET("dashboard/logs/all", true);
+    const logs: LogsResponse = await GET(`dashboard/logs/all?limit=5`, true);
     if (logs) {
       dispatch(updateLogs(logs));
+      return logs;
     }
+  };
+
+  const onSearch: SearchProps["onSearch"] = (value, _e, info) => {
+    console.log(info?.source, value);
+  };
+
+  const fetchData = () => {
+    console.log("fetchData");
   };
 
   useEffect(() => {
@@ -24,47 +37,31 @@ const Logs: React.FC = () => {
     }
   }, []);
 
-  const dataSource = [
-    {
-      key: "1",
-      name: "Mike",
-      age: 32,
-      address: "10 Downing Street",
-    },
-    {
-      key: "2",
-      name: "John",
-      age: 42,
-      address: "10 Downing Street",
-    },
-  ];
-
-  const columns = [
-    {
-      title: "Coding",
-      dataIndex: "coding",
-      key: "coding",
-    },
-    {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-    },
-  ];
-
   return (
     <Wrapper>
       <Header title="Logs" />
+      <FilterWrapper>
+        <Search
+          placeholder="input search text"
+          allowClear
+          onSearch={onSearch}
+          style={{ width: 200 }}
+        />
+      </FilterWrapper>
       <ContentWrapper>
-        {logsData.map((log) => (
-          <LogItem log={log} />
-        ))}
-        {/* <Table dataSource={dataSource} columns={columns} />; */}
+        <InfiniteScroll
+          dataLength={5}
+          next={fetchData}
+          hasMore={true}
+          loader={<h4>Loading...</h4>}
+          height={400}
+          endMessage={<p>You have seen it all</p>}
+        >
+          {logsData?.map((log, i) => (
+            <LogItem key={i} log={log} />
+          ))}
+          <div style={{ height: 20 }}></div>
+        </InfiniteScroll>
       </ContentWrapper>
     </Wrapper>
   );

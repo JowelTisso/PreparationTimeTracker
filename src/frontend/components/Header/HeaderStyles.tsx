@@ -6,7 +6,9 @@ export const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* background-color: ${COLORS.bg}; */
+  position: fixed;
+  top: 10px;
+  left: 0;
   p {
     font-size: 1.7rem;
     margin: 15px;

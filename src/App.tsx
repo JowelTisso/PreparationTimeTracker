@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import BottomNav from "./frontend/components/BottomNav/BottomNav";
 import AllRoutes from "./frontend/routes";
@@ -13,7 +13,7 @@ function App() {
   const checkUserLogin = () => {
     const token = getFromLocalStorage("token");
     if (token) {
-      navigate("/");
+      navigate(location.pathname);
     } else {
       navigate("/auth");
     }

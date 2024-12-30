@@ -1,28 +1,47 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface LogsState {
-  data: LogType[];
-}
-
-export type LogType = {
-  date: string;
+export interface Log {
   tasks: {
     coding: number;
     interview: number;
     job: number;
   };
-};
+  _id: string;
+  userId: string;
+  date: string;
+  __v: number;
+  activeTimer: string;
+}
 
-const initialState: LogsState = {
-  data: [],
+interface Pagination {
+  totalLogs: number;
+  currentPage: number;
+  totalPages: number;
+  limit: number;
+}
+
+export interface LogsResponse {
+  logs: Log[];
+  pagination: Pagination;
+}
+
+export const initialLogState: LogsResponse = {
+  logs: [],
+  pagination: {
+    totalLogs: 0,
+    currentPage: 1,
+    totalPages: 1,
+    limit: 10,
+  },
 };
 
 const logSlice = createSlice({
-  name: "logs",
-  initialState,
+  name: "logState",
+  initialState: initialLogState,
   reducers: {
-    updateLogs: (state, action) => {
-      state.data = action.payload;
+    updateLogs: (state, action: PayloadAction<LogsResponse>) => {
+      state.logs = action.payload.logs;
+      state.pagination = action.payload.pagination;
     },
   },
 });

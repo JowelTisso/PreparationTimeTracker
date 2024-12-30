@@ -5,11 +5,11 @@ import Calendar from "./screens/Calendar/Calendar";
 import Logs from "./screens/logs/Logs";
 import AuthScreen from "./screens/Auth/Login";
 import { TimerProvider } from "./context/TimerProvider";
+import NotFound from "./components/NotFound/NotFound";
 
 const AllRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/auth" element={<AuthScreen />} />
       <Route
         path="/"
         element={
@@ -34,6 +34,8 @@ const AllRoutes: React.FC = () => {
           </TimerProvider>
         }
       />
+      <Route path="/auth" element={<AuthScreen />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

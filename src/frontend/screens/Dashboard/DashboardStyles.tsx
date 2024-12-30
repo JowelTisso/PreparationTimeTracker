@@ -6,9 +6,9 @@ const Wrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  margin-top: 170px;
   p {
     color: ${COLORS.Secondary};
-    font-size: 1.1rem;
   }
 `;
 
@@ -73,7 +73,7 @@ const ResetBtnWrapper = styled.div`
   height: 100px;
   position: absolute;
   right: 0;
-  top: 40px;
+  top: 25px;
 `;
 
 const LogoutBtnWrapper = styled.div`
@@ -81,7 +81,7 @@ const LogoutBtnWrapper = styled.div`
   height: 100px;
   position: absolute;
   left: 0;
-  top: 40px;
+  top: 25px;
 `;
 
 export {

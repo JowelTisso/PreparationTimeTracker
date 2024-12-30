@@ -2,15 +2,17 @@ import React from "react";
 import { LogItemWrapper } from "./LogsStyles";
 import { Progress } from "antd";
 import { COLORS } from "../../utils/Colors";
-import { LogType } from "../../reducer/logSlice";
+import { Log } from "../../reducer/logSlice";
 import { calculatePercent } from "../Dashboard/Dashboard";
+import { upperFirst } from "lodash";
 
 type PropType = {
-  log: LogType;
+  log: Log;
 };
 
 const LogItem = ({ log }: PropType) => {
   const { date, tasks } = log;
+
   return (
     <LogItemWrapper>
       <div className="date-wrapper">
@@ -18,12 +20,19 @@ const LogItem = ({ log }: PropType) => {
       </div>
       <div className="content-wrapper">
         {Object.entries(tasks).map(([title, time]) => {
-          const hour = Math.floor(time / 3600);
-          const minute = Math.floor((time % 3600) / 60);
+          const totalSecondOfCoding = 21600;
+          const totalSecondOfOtherTask = 7200;
+          const totalTimeInSeconds = title.includes("coding")
+            ? totalSecondOfCoding
+            : totalSecondOfOtherTask;
+
+          const timePassed = totalTimeInSeconds - time;
+          const hour = Math.floor(timePassed / 3600);
+          const minute = Math.floor((timePassed % 3600) / 60);
 
           return (
             <div className="item">
-              <p className="title">{title}</p>
+              <p className="title">{upperFirst(title)}</p>
               <p className="time">
                 {hour} <span>hr</span> {minute ? minute : ""}
                 {minute ? <span>min</span> : ""}

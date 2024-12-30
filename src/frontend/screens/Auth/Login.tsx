@@ -108,6 +108,8 @@ const AuthScreen: React.FC = () => {
             layout="vertical"
             initialValues={{
               remember: true,
+              // email: "jowel@abc.com",
+              // password: "123",
               email: "johndoe@gmail.com",
               password: "john@719",
             }}
