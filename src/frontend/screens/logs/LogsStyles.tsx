@@ -1,29 +1,57 @@
 import styled from "styled-components";
 import { COLORS } from "../../utils/Colors";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+interface InfiniteScrollWrapperProps {
+  children: React.ReactNode;
+  dataLength: number;
+  next: () => {};
+  hasMore: boolean;
+  loader: React.ReactNode;
+  height: number;
+}
 
 export const Wrapper = styled.div`
   width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-top: 120px;
+  margin-top: 110px;
   height: 100%;
+  @media screen and (min-width: 800px) {
+    margin-top: 90px;
+  }
 `;
 
 export const FilterWrapper = styled.div`
   display: flex;
   margin-bottom: 10px;
+  background-color: ${COLORS.white};
+  z-index: 1;
+  width: 100%;
 `;
 
 export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 85%;
-  overflow-y: scroll;
+  height: 100%;
+  .search-msg {
+    color: ${COLORS.Secondary};
+  }
+`;
 
+const InfiniteScrollWrapper: React.FC<InfiniteScrollWrapperProps> = ({
+  children,
+  ...rest
+}) => <InfiniteScroll {...rest}>{children}</InfiniteScroll>;
+
+export const StyledInfiniteScroll = styled(InfiniteScrollWrapper)`
   &::-webkit-scrollbar {
     display: none;
+  }
+  @media screen and (min-width: 800px) {
+    height: 500px !important;
   }
 `;
 

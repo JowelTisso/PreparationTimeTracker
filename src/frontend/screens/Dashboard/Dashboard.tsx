@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import { defaultTimer, useTimer } from "../../context/TimerProvider";
 import { COLORS } from "../../utils/Colors";
-import { getCurrentDate, POST } from "../../utils/helper";
+import { clearLocalStorage, getCurrentDate, POST } from "../../utils/helper";
 import {
   ButtonWrapper,
   LogoutBtnWrapper,
@@ -131,7 +131,7 @@ const Dashboard = () => {
     await saveTimerDataToDB(null);
     dispatch(updateLogs(initialLogState));
     setActiveTimer(null);
-    localStorage.clear();
+    clearLocalStorage();
     navigate("/auth");
   }, 500);
 

@@ -38,10 +38,11 @@ const TimerContext = createContext<TimerContextType | undefined>(undefined);
 
 const currentDate = getCurrentDate();
 const getDashboardData = async () => {
-  const token = getFromLocalStorage("token");
-  if (token) {
+  try {
     const res = await GET(`dashboard/${currentDate}`, true);
     return res;
+  } catch (e) {
+    console.log(e);
   }
 };
 

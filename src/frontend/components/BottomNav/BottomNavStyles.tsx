@@ -11,8 +11,8 @@ export const BottomNavContainer = styled.div`
   z-index: 1000;
 
   @media screen and (min-width: 800px) {
-    /* width: 70%; */
-    /* margin: 0 auto; */
+    width: 70%;
+    margin: 0 auto;
   }
 `;
 

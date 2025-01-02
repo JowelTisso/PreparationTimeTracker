@@ -9,26 +9,13 @@
   height: 85vh;
 }
 
-.input-container{
-  background-color: lightsalmon;
-  width:250px ;
-  padding: 10px;
-  border-radius:10px
-}
-
-.text{
-  font-weight: bold;
-  font-size: 2rem;
-  color: lightseagreen;
-}
-
 p{
   font-weight: 500;
 }
 
 @media screen and (min-width: 800px) {
   .App {
-    width: 70%;
+    width: 60%;
     margin: 0 auto;
   }
 }

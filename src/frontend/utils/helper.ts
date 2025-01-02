@@ -8,6 +8,10 @@ export const getFromLocalStorage = (key: string) => {
   return localStorage.getItem(key);
 };
 
+export const clearLocalStorage = () => {
+  localStorage.clear();
+};
+
 export const getCurrentDate = () => {
   const options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
@@ -36,8 +40,12 @@ export const GET = async (url: string, enableToken: boolean = false) => {
       response = await axios.get(url);
     }
     return response?.data;
-  } catch (error) {
-    console.error(error);
+  } catch (e: any) {
+    console.error(e);
+    if (e?.status === 401) {
+      clearLocalStorage();
+    }
+    throw e;
   }
 };
 
@@ -53,7 +61,10 @@ export const POST = async (url: string, data: any) => {
     };
     const response = await axios.post(url, data, { headers });
     return response.data;
-  } catch (error) {
-    console.error(error);
+  } catch (e: any) {
+    if (e?.status === 401) {
+      clearLocalStorage();
+    }
+    console.error(e);
   }
 };

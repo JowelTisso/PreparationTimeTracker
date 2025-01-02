@@ -22,11 +22,13 @@ interface Pagination {
 
 export interface LogsResponse {
   logs: Log[];
+  logsSnapshot: Log[];
   pagination: Pagination;
 }
 
 export const initialLogState: LogsResponse = {
   logs: [],
+  logsSnapshot: [],
   pagination: {
     totalLogs: 0,
     currentPage: 1,
@@ -41,10 +43,24 @@ const logSlice = createSlice({
   reducers: {
     updateLogs: (state, action: PayloadAction<LogsResponse>) => {
       state.logs = action.payload.logs;
+      state.logsSnapshot = action.payload.logs;
       state.pagination = action.payload.pagination;
+    },
+    appendSearchLogs: (state, action: PayloadAction<LogsResponse>) => {
+      state.logs = action.payload.logs;
+      state.pagination = action.payload.pagination;
+    },
+    appendLogs: (state, action: PayloadAction<LogsResponse>) => {
+      state.logs = state.logs.concat(action.payload.logs);
+      state.logsSnapshot = state.logs.concat(action.payload.logs);
+      state.pagination = action.payload.pagination;
+    },
+    restoreLogs: (state) => {
+      state.logs = state.logsSnapshot;
     },
   },
 });
 
-export const { updateLogs } = logSlice.actions;
+export const { updateLogs, appendSearchLogs, appendLogs, restoreLogs } =
+  logSlice.actions;
 export default logSlice.reducer;

@@ -74,6 +74,7 @@ const ResetBtnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 25px;
+  z-index: 1;
 `;
 
 const LogoutBtnWrapper = styled.div`
@@ -82,6 +83,7 @@ const LogoutBtnWrapper = styled.div`
   position: absolute;
   left: 0;
   top: 25px;
+  z-index: 1;
 `;
 
 export {
