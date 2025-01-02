@@ -4,7 +4,7 @@ export const saveToLocalStorage = (key: string, value: string) => {
   localStorage.setItem(key, value);
 };
 
-export const getFromLocalStorage = (key: string) => {
+export const getLocalStorage = (key: string) => {
   return localStorage.getItem(key);
 };
 
@@ -26,7 +26,7 @@ export const GET = async (url: string, enableToken: boolean = false) => {
   try {
     let response;
     if (enableToken) {
-      const token = getFromLocalStorage("token");
+      const token = getLocalStorage("token");
       if (token) {
         const headers = {
           Authorization: `Bearer ${JSON.parse(token)}`,
@@ -41,7 +41,6 @@ export const GET = async (url: string, enableToken: boolean = false) => {
     }
     return response?.data;
   } catch (e: any) {
-    console.error(e);
     if (e?.status === 401) {
       clearLocalStorage();
     }
@@ -51,7 +50,7 @@ export const GET = async (url: string, enableToken: boolean = false) => {
 
 export const POST = async (url: string, data: any) => {
   try {
-    const token = getFromLocalStorage("token");
+    const token = getLocalStorage("token");
     if (!token) {
       throw new Error("No token found in local storage");
     }

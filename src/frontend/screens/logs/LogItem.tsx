@@ -15,9 +15,7 @@ const LogItem = ({ log }: PropType) => {
 
   return (
     <LogItemWrapper>
-      <div className="date-wrapper">
-        <p>{date} :</p>
-      </div>
+      <p className="date-wrapper">{date} :</p>
       <div className="content-wrapper">
         {Object.entries(tasks).map(([title, time]) => {
           const totalSecondOfCoding = 21600;
@@ -31,7 +29,7 @@ const LogItem = ({ log }: PropType) => {
           const minute = Math.floor((timePassed % 3600) / 60);
 
           return (
-            <div className="item">
+            <div className="item" key={title}>
               <p className="title">{upperFirst(title)}</p>
               <p className="time">
                 {hour} <span>hr</span> {minute ? minute : ""}

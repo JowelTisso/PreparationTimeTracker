@@ -62,13 +62,11 @@ export const LogItemWrapper = styled.div`
   margin-bottom: 10px;
 
   .date-wrapper {
-    width: 100%;
+    width: 95%;
     text-align: left;
-    p {
-      margin: 0;
-      padding: 3px 5px;
-      font-size: 0.9rem;
-    }
+    margin: 0;
+    padding: 3px 5px;
+    font-size: 0.9rem;
     background-color: ${COLORS.Background};
     border-radius: 7px;
   }

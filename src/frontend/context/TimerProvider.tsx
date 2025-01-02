@@ -5,12 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  GET,
-  getCurrentDate,
-  getFromLocalStorage,
-  POST,
-} from "../utils/helper";
+import { GET, getCurrentDate, POST } from "../utils/helper";
 interface TimerContextType {
   timers: TimerState;
   activeTimer: TimerType;

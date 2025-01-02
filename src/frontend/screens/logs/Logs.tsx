@@ -88,7 +88,7 @@ const Logs: React.FC = () => {
         }
       }
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
       if (e?.status === 404) {
         dispatch(appendSearchLogs(initialLogState));
       }

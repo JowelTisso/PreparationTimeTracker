@@ -1,9 +1,9 @@
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import BottomNav from "./frontend/components/BottomNav/BottomNav";
 import AllRoutes from "./frontend/routes";
-import { useEffect } from "react";
-import { getFromLocalStorage } from "./frontend/utils/helper";
+import { getLocalStorage } from "./frontend/utils/helper";
 
 function App() {
   const location = useLocation();
@@ -11,7 +11,7 @@ function App() {
   const navigate = useNavigate();
 
   const checkUserLogin = () => {
-    const token = getFromLocalStorage("token");
+    const token = getLocalStorage("token");
     if (token) {
       navigate(location.pathname);
     } else {

@@ -7,8 +7,11 @@ export const HeaderWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   position: fixed;
-  top: 10px;
+  top: 0;
   left: 0;
+  background-color: ${COLORS.white};
+  z-index: 3;
+  padding-top: 10px;
   p {
     font-size: 1.7rem;
     margin: 15px;
