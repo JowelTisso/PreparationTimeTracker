@@ -1,5 +1,6 @@
 import { Button, Checkbox, Modal, Input } from "antd";
 import styled from "styled-components";
+import { COLORS } from "../../utils/Colors";
 const { TextArea } = Input;
 
 export const Wrapper = styled.div`
@@ -24,6 +25,7 @@ export const CalendarContainer = styled.div`
 
   .custom-checkbox-container {
     height: 60%;
+    text-align: center;
   }
 
   .ant-checkbox-wrapper {
@@ -158,9 +160,10 @@ export const StyledButton = styled(Button)`
   font-weight: 500;
   padding: 8px 20px;
   transition: all 0.3s ease;
+  width: 120px;
 
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
+  &:disabled {
+    background-color: ${COLORS.c2};
+    color: ${COLORS.c1};
   }
 `;

@@ -1,7 +1,7 @@
-import { Calendar, CheckboxChangeEvent, CheckboxRef, Select } from "antd";
+import { Badge, Calendar, CheckboxChangeEvent, Select, Spin } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { debounce } from "lodash";
-import { useCallback, useRef, useState } from "react";
+import { debounce, set } from "lodash";
+import { useCallback, useEffect, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import Header from "../../components/Header/Header";
 import { GET, getLocalStorage, POST } from "../../utils/helper";
@@ -13,6 +13,8 @@ import {
   StyledTextArea,
   Wrapper,
 } from "./CalendarStyles";
+import { LoadingOutlined } from "@ant-design/icons";
+import { COLORS } from "../../utils/Colors";
 
 interface completedDateType {
   userId: string;
@@ -24,12 +26,23 @@ const userData = JSON.parse(getLocalStorage("userData") || "{}");
 
 const CalendarWithCheckbox = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const [completedDates, setCompletedDates] = useState<Record<string, boolean>>(
-    {}
-  );
+  const [completedDates, setCompletedDates] = useState<
+    Record<
+      string,
+      {
+        checked: boolean;
+        note: string;
+      }
+    >
+  >({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notes, setNotes] = useState<Record<string, string>>({});
-  const checkboxRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState({
+    spin: false,
+    tick: false,
+  });
+
+  const dateString = currentDate.format("YYYY-MM-DD");
 
   const fetchMonthData = async (date: Dayjs) => {
     const userId = userData.id;
@@ -43,8 +56,17 @@ const CalendarWithCheckbox = () => {
     const urlString = `/calendar/month?userId=${userId}&startDate=${startDate}&endDate=${endDate}`;
     try {
       const res = await GET(urlString, true);
+
       if (res) {
+        const notesData = Object.entries(res.data)?.reduce(
+          (acc: Record<string, string>, [date, value]: any) => {
+            acc[date] = value.note;
+            return acc;
+          },
+          {}
+        );
         setCompletedDates(res.data);
+        setNotes(notesData);
       }
     } catch (e) {
       console.error(e);
@@ -68,16 +90,31 @@ const CalendarWithCheckbox = () => {
   const saveCompletedDates = useCallback(
     debounce(async (data: completedDateType) => {
       try {
+        setLoading((prev) => ({ ...prev, spin: true }));
         await POST("/calendar/update", data);
+        setLoading({
+          spin: false,
+          tick: true,
+        });
       } catch (e) {
         console.error(e);
+        setLoading({
+          spin: false,
+          tick: true,
+        });
+      } finally {
+        setTimeout(() => {
+          setLoading({
+            spin: false,
+            tick: false,
+          });
+        }, 1000);
       }
     }, 500),
     []
   );
 
   const handleCheckboxChange = (date: Dayjs, e: CheckboxChangeEvent) => {
-    e.stopPropagation();
     const dateString = date.toISOString().split("T")[0];
     const userId = userData.id;
 
@@ -91,7 +128,10 @@ const CalendarWithCheckbox = () => {
 
     setCompletedDates((prev) => ({
       ...prev,
-      [dateString]: !prev[dateString],
+      [dateString]: {
+        checked: !prev[dateString].checked,
+        note: prev[dateString]?.note || "",
+      },
     }));
   };
 
@@ -104,33 +144,40 @@ const CalendarWithCheckbox = () => {
   };
 
   const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const dateString = currentDate.format("YYYY-MM-DD");
     setNotes((prev) => ({
       ...prev,
       [dateString]: e.target.value,
     }));
   };
 
-  const handleSaveNote = () => {
-    console.log(notes);
-
-    setIsModalOpen(false);
+  const handleSaveNote = async () => {
+    if (notes[dateString]) {
+      const userId = userData.id;
+      const data = {
+        userId,
+        date: dateString,
+        isChecked: completedDates[dateString]?.checked,
+        note: notes[dateString],
+      };
+      await saveCompletedDates(data);
+    }
   };
 
   const dateCellRender = (date: Dayjs) => {
     const dateString = date.format("YYYY-MM-DD");
-    const isCompleted = completedDates[dateString];
+    const isCompleted = completedDates[dateString]?.checked;
     const isToday = date.isSame(dayjs(), "day");
     const isFuture = date.isAfter(dayjs(), "day");
 
     return (
-      <div className="custom-checkbox-container" ref={checkboxRef}>
+      <div className="custom-checkbox-container">
         <StyledCheckbox
           checked={isCompleted}
           onChange={(e) => handleCheckboxChange(date, e)}
           disabled={!isToday}
           isFuture={isFuture}
         />
+        {notes[dateString] && <Badge color={COLORS.Active} />}
       </div>
     );
   };
@@ -176,6 +223,10 @@ const CalendarWithCheckbox = () => {
     );
   };
 
+  useEffect(() => {
+    fetchMonthData(currentDate);
+  }, []);
+
   return (
     <Wrapper {...swipeHandlers}>
       <Header title="Calendar" />
@@ -189,18 +240,34 @@ const CalendarWithCheckbox = () => {
         />
       </CalendarContainer>
       <BottomModal
-        title={`Add Note for ${currentDate.format("YYYY-MM-DD")}`}
+        title={`Add Note for ${dateString}`}
         open={isModalOpen}
         onOk={handleSaveNote}
         onCancel={() => setIsModalOpen(false)}
         footer={[
-          <StyledButton key="save" type="primary" onClick={handleSaveNote}>
-            Save Note
+          <StyledButton
+            key="save"
+            type="primary"
+            onClick={handleSaveNote}
+            disabled={loading?.spin || !notes[dateString]}
+          >
+            {loading?.spin ? (
+              <Spin
+                indicator={<LoadingOutlined spin />}
+                style={{
+                  color: "#fff",
+                }}
+              />
+            ) : loading?.tick ? (
+              "Saved"
+            ) : (
+              "Save Note"
+            )}
           </StyledButton>,
         ]}
       >
         <StyledTextArea
-          value={notes[currentDate.format("YYYY-MM-DD")] || ""}
+          value={notes[dateString] || ""}
           onChange={handleNoteChange}
           placeholder="Enter your note here..."
         />
