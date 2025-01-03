@@ -21,7 +21,9 @@ const ButtonWrapper = styled.div`
   justify-content: center;
 `;
 
-const ToggleButton = styled.button<{ isChecked: boolean }>`
+const ToggleButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => !["isChecked"].includes(prop),
+})<{ isChecked: boolean }>`
   width: 100px;
   height: 100px;
   border-radius: 50%;
