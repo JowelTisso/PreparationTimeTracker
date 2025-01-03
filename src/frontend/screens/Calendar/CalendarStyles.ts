@@ -24,7 +24,8 @@ export const CalendarContainer = styled.div`
   }
 
   .custom-checkbox-container {
-    height: 60%;
+    margin-top: 10px;
+    height: 40%;
     text-align: center;
   }
 

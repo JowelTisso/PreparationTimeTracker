@@ -1,6 +1,6 @@
 import { Badge, Calendar, CheckboxChangeEvent, Select, Spin } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { debounce, set } from "lodash";
+import { debounce, isEmpty, isNull } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import Header from "../../components/Header/Header";
@@ -15,6 +15,17 @@ import {
 } from "./CalendarStyles";
 import { LoadingOutlined } from "@ant-design/icons";
 import { COLORS } from "../../utils/Colors";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import {
+  updateCompleteDates,
+  updateLoading,
+  updateModalOpen,
+  updateNotes,
+  saveFetchedNotes,
+  saveFetchedCompleteDates,
+  updateCurrentDate,
+} from "../../reducer/calendarSlice";
 
 interface completedDateType {
   userId: string;
@@ -25,23 +36,11 @@ interface completedDateType {
 const userData = JSON.parse(getLocalStorage("userData") || "{}");
 
 const CalendarWithCheckbox = () => {
-  const [currentDate, setCurrentDate] = useState(dayjs());
-  const [completedDates, setCompletedDates] = useState<
-    Record<
-      string,
-      {
-        checked: boolean;
-        note: string;
-      }
-    >
-  >({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [notes, setNotes] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState({
-    spin: false,
-    tick: false,
-  });
+  const { completedDates, isModalOpen, loading, notes, currentDateString } =
+    useSelector(({ calendarState }: RootState) => calendarState);
+  const dispatch = useDispatch<AppDispatch>();
 
+  const currentDate = dayjs(currentDateString);
   const dateString = currentDate.format("YYYY-MM-DD");
 
   const fetchMonthData = async (date: Dayjs) => {
@@ -65,8 +64,8 @@ const CalendarWithCheckbox = () => {
           },
           {}
         );
-        setCompletedDates(res.data);
-        setNotes(notesData);
+        dispatch(saveFetchedCompleteDates(res.data));
+        dispatch(saveFetchedNotes(notesData));
       }
     } catch (e) {
       console.error(e);
@@ -82,7 +81,7 @@ const CalendarWithCheckbox = () => {
           : currentDate.subtract(1, "month");
 
       fetchMonthData(newDate);
-      setCurrentDate(newDate);
+      dispatch(updateCurrentDate(newDate.toISOString()));
     },
     delta: { up: 500, down: 500, left: 80, right: 80 },
   });
@@ -90,24 +89,14 @@ const CalendarWithCheckbox = () => {
   const saveCompletedDates = useCallback(
     debounce(async (data: completedDateType) => {
       try {
-        setLoading((prev) => ({ ...prev, spin: true }));
+        dispatch(updateLoading({ spin: true, tick: false }));
         await POST("/calendar/update", data);
-        setLoading({
-          spin: false,
-          tick: true,
-        });
+        dispatch(updateLoading({ spin: false, tick: true }));
       } catch (e) {
         console.error(e);
-        setLoading({
-          spin: false,
-          tick: true,
-        });
       } finally {
         setTimeout(() => {
-          setLoading({
-            spin: false,
-            tick: false,
-          });
+          dispatch(updateLoading({ spin: false, tick: false }));
         }, 1000);
       }
     }, 500),
@@ -125,29 +114,29 @@ const CalendarWithCheckbox = () => {
     };
 
     saveCompletedDates(data);
-
-    setCompletedDates((prev) => ({
-      ...prev,
-      [dateString]: {
-        checked: !prev[dateString].checked,
-        note: prev[dateString]?.note || "",
-      },
-    }));
+    dispatch(
+      updateCompleteDates({
+        dateString,
+        checked: e.target.checked,
+      })
+    );
   };
 
   const handleDateSelect = (date: Dayjs) => {
     if (document.activeElement?.className.includes("ant-checkbox-input")) {
       return;
     }
-    setIsModalOpen(true);
-    setCurrentDate(date);
+    dispatch(updateModalOpen(true));
+    dispatch(updateCurrentDate(date.toISOString()));
   };
 
   const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNotes((prev) => ({
-      ...prev,
-      [dateString]: e.target.value,
-    }));
+    dispatch(
+      updateNotes({
+        dateString,
+        value: e.target.value,
+      })
+    );
   };
 
   const handleSaveNote = async () => {
@@ -170,7 +159,10 @@ const CalendarWithCheckbox = () => {
     const isFuture = date.isAfter(dayjs(), "day");
 
     return (
-      <div className="custom-checkbox-container">
+      <div
+        className="custom-checkbox-container"
+        onClick={(e) => e.stopPropagation()}
+      >
         <StyledCheckbox
           checked={isCompleted}
           onChange={(e) => handleCheckboxChange(date, e)}
@@ -185,13 +177,13 @@ const CalendarWithCheckbox = () => {
   const handleMonthChange = (month: number) => {
     const newDate = currentDate.month(month);
     fetchMonthData(newDate);
-    setCurrentDate(newDate);
+    dispatch(updateCurrentDate(newDate.toISOString()));
   };
 
   const handleYearChange = (year: number) => {
     const newDate = currentDate.year(year);
     fetchMonthData(newDate);
-    setCurrentDate(newDate);
+    dispatch(updateCurrentDate(newDate.toISOString()));
   };
 
   const headerRender = () => {
@@ -224,7 +216,9 @@ const CalendarWithCheckbox = () => {
   };
 
   useEffect(() => {
-    fetchMonthData(currentDate);
+    if (isEmpty(completedDates)) {
+      fetchMonthData(currentDate);
+    }
   }, []);
 
   return (
@@ -243,7 +237,7 @@ const CalendarWithCheckbox = () => {
         title={`Add Note for ${dateString}`}
         open={isModalOpen}
         onOk={handleSaveNote}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => dispatch(updateModalOpen(false))}
         footer={[
           <StyledButton
             key="save"
