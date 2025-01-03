@@ -6,6 +6,8 @@ import {
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BottomNavContainer, MenuWrapper } from "./BottomNavStyles";
+import { Divider } from "antd";
+import logo from "../../../assets/favicon.png";
 
 const BottomNav: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<string>("dashboard");
@@ -22,9 +24,10 @@ const BottomNav: React.FC = () => {
     setCurrentTab(menu);
   };
 
-  useEffect(() => {
-    setCurrentTab(location.pathname.replace("/", ""));
-  }, []);
+  function isMobile() {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    return isMobile;
+  }
 
   const items = [
     {
@@ -47,12 +50,21 @@ const BottomNav: React.FC = () => {
     },
   ];
 
+  useEffect(() => {
+    setCurrentTab(location.pathname.replace("/", ""));
+  }, []);
+
   return (
     <BottomNavContainer>
+      <div className="menu-header">
+        <img className="logo" src={logo} alt="logo" />
+        <p>Preparation Tracker</p>
+      </div>
+      {!isMobile() && <Divider />}
       <MenuWrapper
         onClick={(e) => navigateTo(e.key)}
         selectedKeys={[currentTab]}
-        mode="horizontal"
+        mode={isMobile() ? "horizontal" : "vertical"}
         theme="light"
         items={items}
       />

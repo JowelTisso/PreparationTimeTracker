@@ -38,4 +38,8 @@ export const HeaderWrapper = styled.div`
     background-color: #fffbf7;
     flex: 1;
   }
+
+  @media screen and (min-width: 800px) {
+    left: 50px;
+  }
 `;

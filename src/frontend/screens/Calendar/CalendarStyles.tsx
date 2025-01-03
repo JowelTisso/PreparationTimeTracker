@@ -52,23 +52,23 @@ export const CalendarContainer = styled.div`
 const getColor = (isFuture: boolean, checked?: boolean, disabled?: boolean) => {
   if (isFuture) {
     return {
-      backgroundColor: "#ffffff",
-      borderColor: "#d9d9d9",
+      backgroundColor: COLORS.checkbox.bg_future,
+      borderColor: COLORS.checkbox.border,
     };
   } else if (checked && !disabled) {
     return {
-      backgroundColor: "#52c41a",
-      borderColor: "#52c41a",
+      backgroundColor: COLORS.checkbox.bg_active,
+      borderColor: COLORS.checkbox.bg_active,
     };
   } else if (checked && disabled) {
     return {
-      backgroundColor: "#b7eb8f",
-      borderColor: "#b7eb8f",
+      backgroundColor: COLORS.checkbox.bg_disabled,
+      borderColor: COLORS.checkbox.bg_disabled,
     };
   } else {
     return {
-      backgroundColor: "#fff1b8",
-      borderColor: "#d9d9d9",
+      backgroundColor: COLORS.checkbox.bg_unchecked,
+      borderColor: COLORS.checkbox.border,
     };
   }
 };
@@ -84,7 +84,7 @@ export const StyledCheckbox = styled(Checkbox).withConfig({
   }
 
   .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #52c41a !important;
+    background-color: ${COLORS.checkbox.bg_active} !important;
   }
 
   .ant-checkbox-checked .ant-checkbox-inner::after {

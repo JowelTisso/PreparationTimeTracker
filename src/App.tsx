@@ -26,11 +26,7 @@ function App() {
   return (
     <div className="App">
       <AllRoutes />
-      {ShowBottomNav && (
-        <div>
-          <BottomNav />
-        </div>
-      )}
+      {ShowBottomNav && <BottomNav />}
     </div>
   );
 }

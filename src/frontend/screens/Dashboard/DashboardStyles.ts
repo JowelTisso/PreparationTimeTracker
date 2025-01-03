@@ -70,15 +70,6 @@ const TimerWrapper = styled.div`
   }
 `;
 
-const ResetBtnWrapper = styled.div`
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  right: 0;
-  top: 25px;
-  z-index: 4;
-`;
-
 const LogoutBtnWrapper = styled.div`
   width: 100px;
   height: 100px;
@@ -86,6 +77,22 @@ const LogoutBtnWrapper = styled.div`
   left: 0;
   top: 25px;
   z-index: 4;
+
+  @media screen and (min-width: 800px) {
+    left: 320px;
+  }
+`;
+
+const ResetBtnWrapper = styled.div`
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  right: 0;
+  top: 25px;
+  z-index: 4;
+  @media screen and (min-width: 800px) {
+    right: 220px;
+  }
 `;
 
 export {

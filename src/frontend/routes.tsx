@@ -18,22 +18,8 @@ const AllRoutes: React.FC = () => {
           </TimerProvider>
         }
       />
-      <Route
-        path="/calendar"
-        element={
-          <TimerProvider>
-            <Calendar />
-          </TimerProvider>
-        }
-      />
-      <Route
-        path="/logs"
-        element={
-          <TimerProvider>
-            <Logs />
-          </TimerProvider>
-        }
-      />
+      <Route path="/calendar" element={<Calendar />} />
+      <Route path="/logs" element={<Logs />} />
       <Route path="/auth" element={<AuthScreen />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -4,7 +4,8 @@ export const COLORS = Object.freeze({
   Accent: "#009990",
   Background: "#f5fcde",
   Active: "#f9b15e",
-  Idle: "#dbf056",
+  Idle: "#bff560",
+  Idle2: "#dbf056",
   white: "#ffffff",
   Text: "#f99441",
   bg: "#465456",
@@ -15,4 +16,11 @@ export const COLORS = Object.freeze({
   c4: "#585468",
   c5: "#8a869b",
   c6: "#47917d",
+  checkbox: {
+    bg_active: "#52c41a",
+    bg_disabled: "#b7eb8f",
+    border: "#d9d9d9",
+    bg_future: "#ffffff",
+    bg_unchecked: "#fff1b8",
+  },
 });
