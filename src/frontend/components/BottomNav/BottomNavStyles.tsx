@@ -16,7 +16,7 @@ export const BottomNavContainer = styled.div`
   }
 `;
 
-export const MenuWrapper = styled(Menu)<{ tabWidth: number }>`
+export const MenuWrapper = styled(Menu)`
   display: "flex";
   .menu-item {
     flex: 1;

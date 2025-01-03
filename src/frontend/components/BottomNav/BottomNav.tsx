@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Menu } from "antd";
 import {
   AppstoreOutlined,
   CalendarOutlined,
@@ -23,11 +22,30 @@ const BottomNav: React.FC = () => {
     setCurrentTab(menu);
   };
 
-  const tabWidth = Math.round(window.innerWidth / 3);
-
   useEffect(() => {
     setCurrentTab(location.pathname.replace("/", ""));
   }, []);
+
+  const items = [
+    {
+      label: "Dashboard",
+      key: "dashboard",
+      icon: <AppstoreOutlined />,
+      className: "menu-item",
+    },
+    {
+      label: "Calendar",
+      key: "calendar",
+      icon: <CalendarOutlined />,
+      className: "menu-item",
+    },
+    {
+      label: "Logs",
+      key: "logs",
+      icon: <FileTextOutlined />,
+      className: "menu-item",
+    },
+  ];
 
   return (
     <BottomNavContainer>
@@ -36,26 +54,8 @@ const BottomNav: React.FC = () => {
         selectedKeys={[currentTab]}
         mode="horizontal"
         theme="light"
-        tabWidth={tabWidth}
-      >
-        <Menu.Item
-          className="menu-item"
-          key="dashboard"
-          icon={<AppstoreOutlined />}
-        >
-          Dashboard
-        </Menu.Item>
-        <Menu.Item
-          className="menu-item"
-          key="calendar"
-          icon={<CalendarOutlined />}
-        >
-          Calendar
-        </Menu.Item>
-        <Menu.Item className="menu-item" key="logs" icon={<FileTextOutlined />}>
-          Logs
-        </Menu.Item>
-      </MenuWrapper>
+        items={items}
+      />
     </BottomNavContainer>
   );
 };

@@ -46,24 +46,38 @@ export const CalendarContainer = styled.div`
   }
 `;
 
-export const StyledCheckbox = styled(Checkbox)<{ isFuture: boolean }>`
+const getColor = (isFuture: boolean, checked?: boolean, disabled?: boolean) => {
+  if (isFuture) {
+    return {
+      backgroundColor: "#ffffff",
+      borderColor: "#d9d9d9",
+    };
+  } else if (checked && !disabled) {
+    return {
+      backgroundColor: "#52c41a",
+      borderColor: "#52c41a",
+    };
+  } else if (checked && disabled) {
+    return {
+      backgroundColor: "#b7eb8f",
+      borderColor: "#b7eb8f",
+    };
+  } else {
+    return {
+      backgroundColor: "#fff1b8",
+      borderColor: "#d9d9d9",
+    };
+  }
+};
+
+export const StyledCheckbox = styled(Checkbox).withConfig({
+  shouldForwardProp: (prop) => !["isFuture"].includes(prop),
+})<{ isFuture: boolean }>`
   .ant-checkbox-inner {
     background-color: ${({ isFuture, checked, disabled }) =>
-      isFuture
-        ? "#ffffff"
-        : checked && !disabled
-        ? "#52c41a" // Green for checked and enabled
-        : checked && disabled
-        ? "#b7eb8f"
-        : "#fff1b8"}; // Light yellow for unchecked
+      getColor(isFuture, checked, disabled).backgroundColor};
     border-color: ${({ isFuture, checked, disabled }) =>
-      isFuture
-        ? "#d9d9d9"
-        : checked && !disabled
-        ? "#52c41a" // Green border for checked and enabled
-        : checked && disabled
-        ? "#b7eb8f"
-        : "#d9d9d9"}; // Default border for unchecked
+      getColor(isFuture, checked, disabled).borderColor};
   }
 
   .ant-checkbox-checked .ant-checkbox-inner {
