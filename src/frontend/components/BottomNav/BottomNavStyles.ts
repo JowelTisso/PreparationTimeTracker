@@ -1,5 +1,6 @@
-import { Menu } from "antd";
+import { Layout, Menu } from "antd";
 import styled from "styled-components";
+import { COLORS } from "../../utils/Colors";
 
 export const BottomNavContainer = styled.div`
   position: absolute;
@@ -9,45 +10,59 @@ export const BottomNavContainer = styled.div`
   background: #fff;
   border-top: 1px solid #ddd;
   z-index: 1000;
+`;
 
-  .menu-header {
-    display: none;
+export const StyledLayout = styled(Layout)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  .logo {
+    width: 23px;
+    height: 23px;
   }
 
-  @media screen and (min-width: 800px) {
-    width: 250px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  .sider {
+    background-color: ${COLORS.nav_background};
+  }
 
-    .menu-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+  .menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1rem;
+    padding: 10px !important;
 
-      .logo {
-        width: 23px;
-        height: 23px;
-      }
-      p {
-        font-size: 1.2rem;
-      }
+    .ant-menu-title-content {
+      margin-left: 0;
     }
+  }
+
+  .menu-item {
+    height: 50px;
+  }
+`;
+
+export const TriggerContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !["collapsed"].includes(prop),
+})<{ collapsed: boolean }>`
+  display: flex;
+  justify-content: ${({ collapsed }) => (collapsed ? "center" : "end")};
+  .trigger {
+    background-color: ${COLORS.white};
+    margin-top: 5px;
+    margin-right: ${({ collapsed }) => (collapsed ? 0 : "5px")};
+    margin-bottom: ${({ collapsed }) => (collapsed ? "10px" : 0)};
   }
 `;
 
 export const MenuWrapper = styled(Menu)`
   display: "flex";
+  background-color: ${COLORS.nav_background};
+
   .menu-item {
     flex: 1;
-
-    @media screen and (min-width: 800px) {
-      display: flex;
-      align-items: center;
-      height: 50px;
-    }
   }
 `;

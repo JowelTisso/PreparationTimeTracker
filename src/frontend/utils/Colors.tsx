@@ -3,6 +3,7 @@ export const COLORS = Object.freeze({
   Secondary: "#3C3D37",
   Accent: "#009990",
   Background: "#f5fcde",
+  nav_background: "#f5f8ff",
   Active: "#f9b15e",
   Idle: "#bff560",
   Idle2: "#dbf056",

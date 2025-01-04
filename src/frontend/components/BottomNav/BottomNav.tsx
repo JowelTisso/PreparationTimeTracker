@@ -6,8 +6,19 @@ import {
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BottomNavContainer, MenuWrapper } from "./BottomNavStyles";
-import { Divider } from "antd";
-import logo from "../../../assets/favicon.png";
+import SideNav from "./SideNav";
+export interface MenuItem {
+  label: string;
+  key: string;
+  icon: JSX.Element;
+  className: string;
+  disabled?: boolean;
+}
+
+const isMobile = () => {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  return isMobile;
+};
 
 const BottomNav: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<string>("dashboard");
@@ -24,12 +35,7 @@ const BottomNav: React.FC = () => {
     setCurrentTab(menu);
   };
 
-  function isMobile() {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    return isMobile;
-  }
-
-  const items = [
+  const items: MenuItem[] = [
     {
       label: "Dashboard",
       key: "dashboard",
@@ -56,18 +62,20 @@ const BottomNav: React.FC = () => {
 
   return (
     <BottomNavContainer>
-      <div className="menu-header">
-        <img className="logo" src={logo} alt="logo" />
-        <p>Preparation Tracker</p>
-      </div>
-      {!isMobile() && <Divider />}
-      <MenuWrapper
-        onClick={(e) => navigateTo(e.key)}
-        selectedKeys={[currentTab]}
-        mode={isMobile() ? "horizontal" : "vertical"}
-        theme="light"
-        items={items}
-      />
+      {isMobile() ? (
+        <MenuWrapper
+          onClick={(e) => navigateTo(e.key)}
+          selectedKeys={[currentTab]}
+          mode={"horizontal"}
+          items={items}
+        />
+      ) : (
+        <SideNav
+          items={items}
+          selectedKeys={[currentTab]}
+          onClick={(e) => navigateTo(e.key)}
+        />
+      )}
     </BottomNavContainer>
   );
 };
