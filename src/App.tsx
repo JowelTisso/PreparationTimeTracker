@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import BottomNav from "./frontend/components/BottomNav/BottomNav";
 import AllRoutes from "./frontend/routes";
-import { getLocalStorage } from "./frontend/utils/helper";
+import { clearLocalStorage, getLocalStorage } from "./frontend/utils/helper";
 
 function App() {
   const location = useLocation();
@@ -11,11 +11,14 @@ function App() {
   const navigate = useNavigate();
 
   const checkUserLogin = () => {
-    const token = getLocalStorage("token");
-    if (token) {
+    const token = getLocalStorage("tokenData");
+    const today = Date.now();
+
+    if (token && JSON.parse(token).expiry > today) {
       navigate(location.pathname);
     } else {
       navigate("/auth");
+      clearLocalStorage();
     }
   };
 

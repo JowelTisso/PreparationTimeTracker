@@ -26,10 +26,10 @@ export const GET = async (url: string, enableToken: boolean = false) => {
   try {
     let response;
     if (enableToken) {
-      const token = getLocalStorage("token");
-      if (token) {
+      const tokenData = getLocalStorage("tokenData");
+      if (tokenData) {
         const headers = {
-          Authorization: `Bearer ${JSON.parse(token)}`,
+          Authorization: `Bearer ${JSON.parse(tokenData).token}`,
           "Content-Type": "application/json",
         };
         response = await axios.get(url, { headers });
@@ -50,12 +50,12 @@ export const GET = async (url: string, enableToken: boolean = false) => {
 
 export const POST = async (url: string, data: any) => {
   try {
-    const token = getLocalStorage("token");
-    if (!token) {
+    const tokenData = getLocalStorage("tokenData");
+    if (!tokenData) {
       throw new Error("No token found in local storage");
     }
     const headers = {
-      Authorization: `Bearer ${JSON.parse(token)}`,
+      Authorization: `Bearer ${JSON.parse(tokenData).token}`,
       "Content-Type": "application/json",
     };
     const response = await axios.post(url, data, { headers });

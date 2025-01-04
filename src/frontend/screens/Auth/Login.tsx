@@ -41,8 +41,15 @@ const AuthScreen: React.FC = () => {
         email,
         password,
       });
+      const expirationTime = Date.now() + 1000 * 60 * 60 * 24;
       if (userData) {
-        saveToLocalStorage("token", JSON.stringify(userData.data.token));
+        saveToLocalStorage(
+          "tokenData",
+          JSON.stringify({
+            token: userData.data.token,
+            expiry: expirationTime,
+          })
+        );
         saveToLocalStorage("userData", JSON.stringify(userData.data.user));
         navigate("/");
         openNotification("success", "Login successful");
