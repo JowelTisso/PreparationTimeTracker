@@ -24,8 +24,21 @@ export const FormContainer = styled.div`
   flex: 1;
   padding: 40px;
 
+  .login-form-button {
+    color: ${COLORS.Secondary};
+    background-color: ${COLORS.Idle};
+    &:hover {
+      color: ${COLORS.white};
+      background-color: ${COLORS.Active} !important;
+    }
+  }
+
   .signup-link {
-    color: ${COLORS.Active} !important;
+    color: ${COLORS.Active};
+
+    &:hover {
+      color: ${COLORS.Secondary} !important;
+    }
   }
   &:active {
     background-color: white;

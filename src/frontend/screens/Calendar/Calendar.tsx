@@ -33,12 +33,11 @@ interface completedDateType {
   isChecked: boolean;
 }
 
-const userData = JSON.parse(getLocalStorage("userData") || "{}");
-
 const CalendarWithCheckbox = () => {
   const { completedDates, isModalOpen, loading, notes, currentDateString } =
     useSelector(({ calendarState }: RootState) => calendarState);
   const dispatch = useDispatch<AppDispatch>();
+  const userData = JSON.parse(getLocalStorage("userData") || "{}");
 
   const currentDate = dayjs(currentDateString);
   const dateString = currentDate.format("YYYY-MM-DD");

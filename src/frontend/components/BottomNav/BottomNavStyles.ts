@@ -50,6 +50,14 @@ export const TriggerContainer = styled.div.withConfig({
 })<{ collapsed: boolean }>`
   display: flex;
   justify-content: ${({ collapsed }) => (collapsed ? "center" : "end")};
+
+  .username {
+    font-size: 1.1rem;
+    margin: 7px;
+    width: 65%;
+    font-weight: 500;
+  }
+
   .trigger {
     background-color: ${COLORS.white};
     margin-top: 5px;

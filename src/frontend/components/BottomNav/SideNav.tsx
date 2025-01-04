@@ -1,9 +1,10 @@
-import { Button, Layout } from "antd";
+import { Button, Layout, Typography } from "antd";
 import { useState } from "react";
 import logo from "../../../assets/favicon.png";
 import { MenuItem } from "./BottomNav";
 import { MenuWrapper, StyledLayout, TriggerContainer } from "./BottomNavStyles";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { getLocalStorage } from "../../utils/helper";
 
 const { Sider } = Layout;
 
@@ -15,6 +16,9 @@ type SideNavProps = {
 
 const SideNav = ({ items, selectedKeys, onClick }: SideNavProps) => {
   const [collapsed, setCollapsed] = useState(false);
+  const userData = JSON.parse(getLocalStorage("userData") || "{}");
+  const { Text } = Typography;
+
   return (
     <StyledLayout>
       <Sider
@@ -27,6 +31,11 @@ const SideNav = ({ items, selectedKeys, onClick }: SideNavProps) => {
         width={220}
       >
         <TriggerContainer collapsed={collapsed}>
+          {!collapsed && (
+            <Text className="username" ellipsis>
+              {userData.name}
+            </Text>
+          )}
           <Button
             type="text"
             className="trigger"

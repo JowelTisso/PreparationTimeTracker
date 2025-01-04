@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { Form, Input, Button, Typography } from "antd";
-import { CardWrapper, Container, FormContainer } from "./AuthStyles";
+import { Button, Form, Input, Spin, Typography } from "antd";
 import axios from "axios";
-import { saveToLocalStorage } from "../../utils/helper";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMessageApi } from "../../context/MessageProvider";
 import { COLORS } from "../../utils/Colors";
+import { saveToLocalStorage } from "../../utils/helper";
+import { CardWrapper, Container, FormContainer } from "./AuthStyles";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -21,6 +22,7 @@ const AuthScreen: React.FC = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const messageApi = useMessageApi();
+  const [loading, setLoading] = useState(false);
 
   const onFinish = (values: ValuesType) => {
     const { name, email, password, confirmPassword } = values;
@@ -31,12 +33,9 @@ const AuthScreen: React.FC = () => {
     }
   };
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
-  };
-
   const loginHandler = async (email: string, password: string) => {
     try {
+      setLoading(true);
       const userData = await axios.post("/users/login", {
         email,
         password,
@@ -57,6 +56,8 @@ const AuthScreen: React.FC = () => {
     } catch (error) {
       console.log(error);
       openNotification("error", "Invalid email or password");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,6 +67,7 @@ const AuthScreen: React.FC = () => {
     password: string,
     confirmPassword: string
   ) => {
+    setLoading(true);
     try {
       if (password !== confirmPassword) {
         openNotification("error", "Password and confirm password do not match");
@@ -87,6 +89,8 @@ const AuthScreen: React.FC = () => {
     } catch (error) {
       console.log(error);
       openNotification("error", "Signup failed, please try again");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -113,15 +117,7 @@ const AuthScreen: React.FC = () => {
             form={form}
             name="authForm"
             layout="vertical"
-            initialValues={{
-              remember: true,
-              // email: "jowel@abc.com",
-              // password: "123",
-              email: "johndoe@gmail.com",
-              password: "john@719",
-            }}
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
           >
             {!isLogin && (
               <Form.Item
@@ -166,13 +162,22 @@ const AuthScreen: React.FC = () => {
               <Button
                 type="primary"
                 htmlType="submit"
+                className="login-form-button"
                 block
-                style={{
-                  color: COLORS.Secondary,
-                  backgroundColor: COLORS.Idle,
-                }}
+                disabled={loading}
               >
-                {isLogin ? "Login" : "Signup"}
+                {loading ? (
+                  <Spin
+                    indicator={<LoadingOutlined spin />}
+                    style={{
+                      color: "#fff",
+                    }}
+                  />
+                ) : isLogin ? (
+                  "Login"
+                ) : (
+                  "Signup"
+                )}
               </Button>
             </Form.Item>
           </Form>
@@ -183,11 +188,27 @@ const AuthScreen: React.FC = () => {
               setIsLogin(!isLogin);
               form.resetFields();
             }}
+            disabled={loading}
           >
             {isLogin
               ? "Don't have an account? Signup"
               : "Already have an account? Login"}
           </Button>
+          {isLogin && (
+            <Button
+              className="signup-link"
+              type="link"
+              onClick={() => {
+                form.setFieldsValue({
+                  email: "johndoe@gmail.com",
+                  password: "john@719",
+                });
+              }}
+              disabled={loading}
+            >
+              Fill Test Credentials
+            </Button>
+          )}
         </FormContainer>
       </CardWrapper>
     </Container>
