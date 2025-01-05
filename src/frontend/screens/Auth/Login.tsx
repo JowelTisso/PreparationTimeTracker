@@ -1,5 +1,5 @@
 import { Button, Form, Input, Spin, Typography } from "antd";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMessageApi } from "../../context/MessageProvider";
@@ -87,8 +87,15 @@ const AuthScreen: React.FC = () => {
         form.resetFields();
       }
     } catch (error) {
-      console.log(error);
-      openNotification("error", "Signup failed, please try again");
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 400) {
+          openNotification("error", error.response.data.message);
+        } else {
+          openNotification("error", "Signup failed, please try again");
+        }
+      } else {
+        console.log("An unexpected error occurred:", error);
+      }
     } finally {
       setLoading(false);
     }
