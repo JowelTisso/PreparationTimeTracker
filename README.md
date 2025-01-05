@@ -1,46 +1,69 @@
-# Getting Started with Create React App
+# Preparation Time Tracker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Preparation Time Tracker is a tool designed to help users track and manage their interview preparation time effectively. Whether you're a student, professional, or hobbyist, this tool ensures you stay organized and efficient with your preparation time.
 
-## Available Scripts
+## Table of Contents
 
-In the project directory, you can run:
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**Time Tracking** :
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Efficiently log and monitor time dedicated to preparation tasks such as coding projects, interview preparation, and job applications. The application allows you to set a daily preparation time, defaulting to 10 hours. You can allocate this time among coding (6 hours), interview preparation (2 hours), and job applications (2 hours), with the flexibility to adjust these allocations as needed.
 
-### `npm test`
+**Task Management** :
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Organize and prioritize tasks by categories or urgency. Seamlessly switch between tasks with a single click; for instance, after spending 2 hours coding, you can effortlessly transition to job application tasks using the toggle feature.
 
-### `npm run build`
+**Progress Reports** :
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Automatically save daily progress and generate comprehensive reports to visualize your preparation journey. Access these insights in the 'Logs' tab to assess performance and make informed adjustments.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Calendar Integration** :
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Utilize the integrated calendar to mark completed days, track remaining preparation days, and maintain focus. Review past days to evaluate preparation efforts or rest periods, aiding in maintaining a balanced schedule.
 
-### `npm run eject`
+**User-Friendly Interface** :
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Experience a clean, intuitive design that enhances usability, ensuring efficient navigation and task management for optimal productivity.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Installation
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+1. Clone the Repository:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+   ```
+   git clone https://github.com/JowelTisso/PreparationTimeTracker.git
+   ```
 
-## Learn More
+2. Navigate to the Project Directory:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   ```
+   cd PreparationTimeTracker
+   ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+3. Install Dependencies:
+   ```
+   npm install
+   ```
+
+## Usage
+
+1. Start the Application:
+   ```
+   npm start
+   ```
+2. Access the Application:
+
+   Open your browser and navigate to `http://localhost:3000` to use the app.
+
+## Deployment
+
+The application is deployed and accessible at [preparationtracker.netlify.app]("https://preparationtracker.netlify.app/").
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and create a pull request with your proposed changes.
