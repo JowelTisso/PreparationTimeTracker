@@ -9,20 +9,12 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 110px;
-  height: 100%;
   @media screen and (min-width: 800px) {
-    margin-top: 90px;
-    height: 90%;
+    height: 670px;
   }
 `;
 
 export const CalendarContainer = styled.div`
-  .ant-picker-calendar {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
   .custom-checkbox-container {
     margin-top: 10px;
     height: 40%;
@@ -45,7 +37,14 @@ export const CalendarContainer = styled.div`
     display: flex;
     justify-content: center;
     gap: 16px;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
+  }
+
+  @media screen and (min-width: 800px) {
+    display: flex;
+    align-items: center;
+    transform: scale(0.9);
+    gap: 50px;
   }
 `;
 

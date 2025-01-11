@@ -51,6 +51,8 @@ const TimerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  margin-left: 15px;
+  margin-right: 15px;
 
   .wrapper {
     font-size: 1.5rem;
@@ -75,7 +77,7 @@ const LogoutBtnWrapper = styled.div`
   height: 100px;
   position: absolute;
   left: 0;
-  top: 25px;
+  top: 10px;
   z-index: 4;
 
   @media screen and (min-width: 800px) {
@@ -88,7 +90,7 @@ const ResetBtnWrapper = styled.div`
   height: 100px;
   position: absolute;
   right: 0;
-  top: 25px;
+  top: 10px;
   z-index: 4;
   @media screen and (min-width: 800px) {
     right: 220px;

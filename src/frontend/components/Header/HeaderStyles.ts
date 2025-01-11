@@ -11,10 +11,9 @@ export const HeaderWrapper = styled.div`
   left: 0;
   background-color: ${COLORS.white};
   z-index: 3;
-  padding-top: 10px;
   p {
     font-size: 1.7rem;
-    margin: 15px;
+    margin: 10px;
   }
   .title-wrapper {
     display: flex;

@@ -15,7 +15,7 @@ export interface MenuItem {
   disabled?: boolean;
 }
 
-const isMobile = () => {
+export const isMobile = () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   return isMobile;
 };

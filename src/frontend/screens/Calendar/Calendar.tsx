@@ -1,9 +1,33 @@
-import { Badge, Calendar, CheckboxChangeEvent, Select, Spin } from "antd";
+import {
+  CaretLeftFilled,
+  CaretRightFilled,
+  LoadingOutlined,
+} from "@ant-design/icons";
+import {
+  Badge,
+  Button,
+  Calendar,
+  CheckboxChangeEvent,
+  Select,
+  Spin,
+} from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { debounce, isEmpty, isNull } from "lodash";
-import { useCallback, useEffect, useState } from "react";
-import { useSwipeable } from "react-swipeable";
+import { debounce, isEmpty } from "lodash";
+import { useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { SwipeDirections, useSwipeable } from "react-swipeable";
 import Header from "../../components/Header/Header";
+import {
+  saveFetchedCompleteDates,
+  saveFetchedNotes,
+  updateCompleteDates,
+  updateCurrentDate,
+  updateLoading,
+  updateModalOpen,
+  updateNotes,
+} from "../../reducer/calendarSlice";
+import { AppDispatch, RootState } from "../../store/store";
+import { COLORS } from "../../utils/Colors";
 import { GET, getLocalStorage, POST } from "../../utils/helper";
 import {
   BottomModal,
@@ -13,19 +37,7 @@ import {
   StyledTextArea,
   Wrapper,
 } from "./CalendarStyles";
-import { LoadingOutlined } from "@ant-design/icons";
-import { COLORS } from "../../utils/Colors";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import {
-  updateCompleteDates,
-  updateLoading,
-  updateModalOpen,
-  updateNotes,
-  saveFetchedNotes,
-  saveFetchedCompleteDates,
-  updateCurrentDate,
-} from "../../reducer/calendarSlice";
+import { isMobile } from "../../components/BottomNav/BottomNav";
 
 interface completedDateType {
   userId: string;
@@ -71,16 +83,20 @@ const CalendarWithCheckbox = () => {
     }
   };
 
+  const onMonthChange = (direction: SwipeDirections) => {
+    let newDate =
+      direction === "Left"
+        ? currentDate.add(1, "month")
+        : currentDate.subtract(1, "month");
+
+    fetchMonthData(newDate);
+    dispatch(updateCurrentDate(newDate.toISOString()));
+  };
+
   const swipeHandlers = useSwipeable({
     onSwiped: (eventData) => {
       const direction = eventData.dir;
-      let newDate =
-        direction === "Left"
-          ? currentDate.add(1, "month")
-          : currentDate.subtract(1, "month");
-
-      fetchMonthData(newDate);
-      dispatch(updateCurrentDate(newDate.toISOString()));
+      onMonthChange(direction);
     },
     delta: { up: 500, down: 500, left: 80, right: 80 },
   });
@@ -214,6 +230,14 @@ const CalendarWithCheckbox = () => {
     );
   };
 
+  const onLeftClick = () => {
+    onMonthChange("Right");
+  };
+
+  const onRightClick = () => {
+    onMonthChange("Left");
+  };
+
   useEffect(() => {
     if (isEmpty(completedDates)) {
       fetchMonthData(currentDate);
@@ -224,6 +248,13 @@ const CalendarWithCheckbox = () => {
     <Wrapper {...swipeHandlers}>
       <Header title="Calendar" />
       <CalendarContainer>
+        {!isMobile() && (
+          <Button
+            onClick={onLeftClick}
+            shape="circle"
+            icon={<CaretLeftFilled />}
+          />
+        )}
         <Calendar
           mode="month"
           value={currentDate}
@@ -231,6 +262,13 @@ const CalendarWithCheckbox = () => {
           headerRender={headerRender}
           onSelect={handleDateSelect}
         />
+        {!isMobile() && (
+          <Button
+            onClick={onRightClick}
+            shape="circle"
+            icon={<CaretRightFilled />}
+          />
+        )}
       </CalendarContainer>
       <BottomModal
         title={`Add Note for ${dateString}`}

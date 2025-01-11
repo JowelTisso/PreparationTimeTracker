@@ -10,6 +10,10 @@ export const BottomNavContainer = styled.div`
   background: #fff;
   border-top: 1px solid #ddd;
   z-index: 1000;
+
+  @media screen and (min-width: 800px) {
+    border-top: none;
+  }
 `;
 
 export const StyledLayout = styled(Layout)`
