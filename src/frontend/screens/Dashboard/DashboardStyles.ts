@@ -10,6 +10,12 @@ const Wrapper = styled.div`
   p {
     color: ${COLORS.Secondary};
   }
+
+  @media screen and (min-width: 800px) {
+    width: 70%;
+    margin-left: 18%;
+    margin-right: 10%;
+  }
 `;
 
 const ButtonWrapper = styled.div`

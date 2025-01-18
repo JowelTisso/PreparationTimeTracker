@@ -6,6 +6,12 @@ export const Container = styled.div`
   height: 100vh;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+
+  .cold-info {
+    position: absolute;
+    bottom: 50px;
+  }
 `;
 
 export const CardWrapper = styled.div`

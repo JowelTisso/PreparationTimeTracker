@@ -20,6 +20,9 @@ export const Wrapper = styled.div`
   height: 100%;
   @media screen and (min-width: 800px) {
     margin-top: 90px;
+    width: 70%;
+    margin-left: 18%;
+    margin-right: 10%;
   }
 `;
 

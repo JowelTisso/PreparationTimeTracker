@@ -1,4 +1,5 @@
-import { Button, Form, Input, Spin, Typography } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Alert, Button, Form, Input, Spin, Typography } from "antd";
 import axios, { AxiosError } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +7,6 @@ import { useMessageApi } from "../../context/MessageProvider";
 import { COLORS } from "../../utils/Colors";
 import { saveToLocalStorage } from "../../utils/helper";
 import { CardWrapper, Container, FormContainer } from "./AuthStyles";
-import { LoadingOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -218,6 +218,14 @@ const AuthScreen: React.FC = () => {
           )}
         </FormContainer>
       </CardWrapper>
+      <div className="cold-info">
+        <Alert
+          message="Please note: The app is initializing and may take a few extra seconds to load on first login due to server cold start."
+          type="warning"
+          closable
+          showIcon
+        />
+      </div>
     </Container>
   );
 };

@@ -13,8 +13,4 @@ p{
   font-weight: 500;
 }
 
-@media screen and (min-width: 800px) {
-  .App {
-    margin: 0 10% 0 18%;
-  }
-}
+
