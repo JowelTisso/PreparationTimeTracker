@@ -17,19 +17,5 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff",
-  "screenshots": [
-    {
-      "src": "/images/s-mobile.jpg",
-      "type": "image/jpg",
-      "sizes": "540x1146",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/images/s-desktop.png",
-      "type": "image/png",
-      "sizes": "1909x857",
-      "form_factor": "wide"
-    }
-  ]
+  "background_color": "#ffffff"
 }

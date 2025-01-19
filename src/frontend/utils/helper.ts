@@ -13,13 +13,18 @@ export const clearLocalStorage = () => {
 };
 
 export const getCurrentDate = () => {
+  const date = new Date();
+  return date.toISOString();
+};
+
+export const formatDate = (date: Date) => {
   const options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
     month: "short",
     year: "numeric",
   };
-  const date = new Date();
-  return date.toLocaleDateString("en-US", options);
+  const dateString = date.toLocaleDateString("en-US", options);
+  return dateString;
 };
 
 export const GET = async (url: string, enableToken: boolean = false) => {

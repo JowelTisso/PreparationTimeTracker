@@ -52,7 +52,7 @@ const Logs: React.FC = () => {
 
   const getQueryLogs = async ({
     page = 0,
-    limit = 5,
+    limit = 10,
     search = "",
     startDate = "",
     endDate = "",
@@ -137,8 +137,8 @@ const Logs: React.FC = () => {
             loader={<Spin size="small" />}
             height={heightOfInfiniteScroll}
           >
-            {logsData?.map((log, i) => (
-              <LogItem key={i} log={log} />
+            {logsData?.map((log) => (
+              <LogItem key={log._id} log={log} />
             ))}
           </StyledInfiniteScroll>
         ) : (

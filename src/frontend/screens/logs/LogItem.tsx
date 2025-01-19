@@ -5,6 +5,7 @@ import { COLORS } from "../../utils/Colors";
 import { Log } from "../../reducer/logSlice";
 import { calculatePercent } from "../Dashboard/Dashboard";
 import { upperFirst } from "lodash";
+import { formatDate } from "../../utils/helper";
 
 type PropType = {
   log: Log;
@@ -12,10 +13,11 @@ type PropType = {
 
 const LogItem = ({ log }: PropType) => {
   const { date, tasks } = log;
+  const dateString = new Date(date);
 
   return (
     <LogItemWrapper>
-      <p className="date-wrapper">{date} :</p>
+      <p className="date-wrapper">{formatDate(dateString)} :</p>
       <div className="content-wrapper">
         {Object.entries(tasks).map(([title, time]) => {
           const totalSecondOfCoding = 21600;
