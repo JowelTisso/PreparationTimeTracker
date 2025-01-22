@@ -13,6 +13,7 @@ interface TimerContextType {
   setTimers: React.Dispatch<React.SetStateAction<TimerState>>;
   timersSnapshot: TimerState;
   setTimersSnapshot: (timers: TimerState) => void;
+  loading: boolean;
 }
 
 type TimerState = {
@@ -32,14 +33,6 @@ type TimerType = "coding" | "interview" | "job" | null;
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
 
 const currentDate = getCurrentDate();
-const getDashboardData = async () => {
-  try {
-    const res = await GET(`dashboard/${currentDate}`, true);
-    return res;
-  } catch (e) {
-    console.log(e);
-  }
-};
 
 export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -47,6 +40,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [timers, setTimers] = useState<TimerState>(defaultTimer);
   const [activeTimer, setActiveTimer] = useState<TimerType>(null);
   const [timersSnapshot, setTimersSnapshot] = useState(defaultTimer);
+  const [loading, setLoading] = useState(false);
   let interval = useRef<NodeJS.Timeout>();
   let counter = useRef(0);
 
@@ -63,6 +57,17 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
     };
     await POST("dashboard/", data);
     setTimersSnapshot(tasks);
+  };
+
+  const getDashboardData = async () => {
+    setLoading(true);
+    try {
+      const res = await GET(`dashboard/${currentDate}`, true);
+      return res;
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -110,6 +115,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
         setTimers,
         timersSnapshot,
         setTimersSnapshot,
+        loading,
       }}
     >
       {children}

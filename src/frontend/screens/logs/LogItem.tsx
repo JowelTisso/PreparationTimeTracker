@@ -1,4 +1,3 @@
-import React from "react";
 import { LogItemWrapper } from "./LogsStyles";
 import { Progress } from "antd";
 import { COLORS } from "../../utils/Colors";

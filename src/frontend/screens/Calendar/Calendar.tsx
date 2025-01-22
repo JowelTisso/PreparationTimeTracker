@@ -16,7 +16,9 @@ import { debounce, isEmpty } from "lodash";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SwipeDirections, useSwipeable } from "react-swipeable";
+import { isMobile } from "../../components/BottomNav/BottomNav";
 import Header from "../../components/Header/Header";
+import Loader from "../../components/Loader";
 import {
   saveFetchedCompleteDates,
   saveFetchedNotes,
@@ -37,7 +39,6 @@ import {
   StyledTextArea,
   Wrapper,
 } from "./CalendarStyles";
-import { isMobile } from "../../components/BottomNav/BottomNav";
 
 interface completedDateType {
   userId: string;
@@ -55,6 +56,7 @@ const CalendarWithCheckbox = () => {
   const dateString = currentDate.format("YYYY-MM-DD");
 
   const fetchMonthData = async (date: Dayjs) => {
+    dispatch(updateLoading({ spin: true, tick: false }));
     const userId = userData.id;
     const year = date.year();
     let month = (date.month() + 1).toString();
@@ -81,6 +83,7 @@ const CalendarWithCheckbox = () => {
     } catch (e) {
       console.error(e);
     }
+    dispatch(updateLoading({ spin: false, tick: false }));
   };
 
   const onMonthChange = (direction: SwipeDirections) => {
@@ -303,6 +306,7 @@ const CalendarWithCheckbox = () => {
           placeholder="Enter your note here..."
         />
       </BottomModal>
+      {loading.spin && <Loader />}
     </Wrapper>
   );
 };

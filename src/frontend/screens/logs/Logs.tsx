@@ -21,6 +21,7 @@ import {
   StyledInfiniteScroll,
   Wrapper,
 } from "./LogsStyles";
+import Loader from "../../components/Loader";
 
 interface GetLogType {
   page?: number;
@@ -142,7 +143,7 @@ const Logs: React.FC = () => {
             ))}
           </StyledInfiniteScroll>
         ) : (
-          <p className="search-msg">No Logs Found!</p>
+          <Loader />
         )}
       </ContentWrapper>
     </Wrapper>

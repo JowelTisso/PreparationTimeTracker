@@ -22,6 +22,7 @@ import {
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { initialLogState, updateLogs } from "../../reducer/logSlice";
+import Loader from "../../components/Loader";
 
 type TimerType = "coding" | "interview" | "job" | null;
 
@@ -64,6 +65,7 @@ const Dashboard = () => {
     setTimers,
     timersSnapshot,
     setTimersSnapshot,
+    loading: loadingData,
   } = useTimer();
   const timersRef = useRef(timers);
   const timersSnapshotRef = useRef(timersSnapshot);
@@ -235,6 +237,7 @@ const Dashboard = () => {
           <p>Application</p>
         </div>
       </ButtonWrapper>
+      {loadingData && <Loader />}
     </Wrapper>
   );
 };
