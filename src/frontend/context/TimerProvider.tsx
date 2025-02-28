@@ -14,6 +14,7 @@ interface TimerContextType {
   timersSnapshot: TimerState;
   setTimersSnapshot: (timers: TimerState) => void;
   loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
 
 type TimerState = {
@@ -59,28 +60,6 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
     setTimersSnapshot(tasks);
   };
 
-  const getDashboardData = async () => {
-    setLoading(true);
-    try {
-      const res = await GET(`dashboard/${currentDate}`, true);
-      return res;
-    } catch (e) {
-      console.log(e);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    (async () => {
-      const dashboardData = await getDashboardData();
-      if (dashboardData) {
-        setTimersSnapshot(JSON.parse(JSON.stringify(dashboardData.tasks)));
-        setTimers(dashboardData.tasks);
-        setActiveTimer(dashboardData.activeTimer);
-      }
-    })();
-  }, []);
-
   useEffect(() => {
     counter.current++;
     if (counter.current > 60) {
@@ -116,6 +95,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
         timersSnapshot,
         setTimersSnapshot,
         loading,
+        setLoading,
       }}
     >
       {children}

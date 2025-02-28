@@ -10,7 +10,12 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import { defaultTimer, useTimer } from "../../context/TimerProvider";
 import { COLORS } from "../../utils/Colors";
-import { clearLocalStorage, getCurrentDate, POST } from "../../utils/helper";
+import {
+  clearLocalStorage,
+  GET,
+  getCurrentDate,
+  POST,
+} from "../../utils/helper";
 import {
   ButtonWrapper,
   LogoutBtnWrapper,
@@ -66,6 +71,7 @@ const Dashboard = () => {
     timersSnapshot,
     setTimersSnapshot,
     loading: loadingData,
+    setLoading: setDashboardLoading,
   } = useTimer();
   const timersRef = useRef(timers);
   const timersSnapshotRef = useRef(timersSnapshot);
@@ -145,6 +151,24 @@ const Dashboard = () => {
 
   useEffect(() => {
     debouncedSaveTimerDataToDBRef.current = debounce(saveTimerDataToDB, 2000);
+    (async () => {
+      const getDashboardData = async () => {
+        try {
+          setDashboardLoading(true);
+          return await GET(`dashboard/${currentDate}`, true);
+        } catch (e) {
+          console.log(e);
+        } finally {
+          setDashboardLoading(false);
+        }
+      };
+      const dashboardData = await getDashboardData();
+      if (dashboardData) {
+        setTimersSnapshot(JSON.parse(JSON.stringify(dashboardData.tasks)));
+        setTimers(dashboardData.tasks);
+        setActiveTimer(dashboardData.activeTimer);
+      }
+    })();
   }, []);
 
   useEffect(() => {
