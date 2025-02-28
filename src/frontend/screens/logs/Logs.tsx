@@ -1,12 +1,13 @@
-import { Input, Spin } from "antd";
+import { Empty, Input, Spin } from "antd";
 import { SearchProps } from "antd/es/input";
 import { debounce } from "lodash";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/Header/Header";
 import {
   appendLogs,
   appendSearchLogs,
+  defaultPagination,
   initialLogState,
   LogsResponse,
   restoreLogs,
@@ -32,6 +33,7 @@ interface GetLogType {
 }
 
 const Logs: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const { logs: logsData, pagination } = useSelector(
     ({ logState }: RootState) => logState
   );
@@ -42,12 +44,15 @@ const Logs: React.FC = () => {
   const getLogs = async () => {
     let urlString = "dashboard/logs/all?";
     try {
+      setLoading(true);
       const logs: LogsResponse = await GET(urlString, true);
       if (logs) {
         dispatch(updateLogs(logs));
       }
     } catch (e) {
       console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,8 +79,15 @@ const Logs: React.FC = () => {
     if (endDate) {
       urlString = urlString.concat(`endDate=${endDate}&`);
     }
-    const logs: LogsResponse = await GET(urlString, true);
-    return logs;
+    try {
+      setLoading(true);
+      const logs: LogsResponse = await GET(urlString, true);
+      return logs;
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onSearch: SearchProps["onSearch"] = debounce(async (value) => {
@@ -86,6 +98,13 @@ const Logs: React.FC = () => {
         });
         if (logs) {
           dispatch(appendSearchLogs(logs));
+        } else {
+          dispatch(
+            appendSearchLogs({
+              logs: [],
+              pagination: defaultPagination,
+            })
+          );
         }
       }
     } catch (e: any) {
@@ -143,9 +162,10 @@ const Logs: React.FC = () => {
             ))}
           </StyledInfiniteScroll>
         ) : (
-          <Loader />
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         )}
       </ContentWrapper>
+      {loading && <Loader />}
     </Wrapper>
   );
 };

@@ -14,7 +14,7 @@ export const clearLocalStorage = () => {
 
 export const getCurrentDate = () => {
   const date = new Date();
-  return date.toISOString();
+  return date.setHours(0, 0, 0, 0);
 };
 
 export const formatDate = (date: Date) => {
@@ -23,7 +23,7 @@ export const formatDate = (date: Date) => {
     month: "short",
     year: "numeric",
   };
-  const dateString = date.toLocaleDateString("en-US", options);
+  const dateString = date.toLocaleDateString("en-GB", options);
   return dateString;
 };
 
