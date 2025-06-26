@@ -184,7 +184,7 @@ const CalendarWithCheckbox = () => {
         <StyledCheckbox
           checked={isCompleted}
           onChange={(e) => handleCheckboxChange(date, e)}
-          disabled={!isToday}
+          // disabled={!isToday}
           isFuture={isFuture}
         />
         {notes[dateString] && <Badge color={COLORS.Active} />}
